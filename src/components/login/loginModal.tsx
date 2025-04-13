@@ -1,8 +1,44 @@
 'use client';
 
-import { Button, Form, Input, Typography } from 'antd';
+import { Button, Form, Input, Typography, message } from 'antd';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation'; // ✅ import for navigation
 
 export const LoginModal = () => {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter(); // ✅ initialize router
+
+  const handleLogin = async (values: { email: string; password: string }) => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:8000/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed.');
+      }
+
+      localStorage.setItem('token', data.token);
+      message.success('Login successful!');
+
+      // ✅ Redirect to dashboard or wherever
+      router.push('/dashboard'); // or any route you want
+    } catch (error: any) {
+      message.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   return (
     <div
       style={{
@@ -31,19 +67,31 @@ export const LoginModal = () => {
           Please log in to continue
         </Typography>
 
-        <Form layout="vertical" style={{ width: '100%' }}>
-  <Form.Item
-    name="email"
-    label={<span style={{ color: '#4A90E2', fontWeight: 500,fontSize:"15px" }}>Email</span>}
-  >
-    <Input style={{ color: '#4A90E2' }} />
-  </Form.Item>
-  <Form.Item name="password" label={<span style={{ color: '#4A90E2', fontWeight: 500,fontSize:"15px" }}>Password</span>}>
-    <Input type="password"></Input>
-  </Form.Item>
-  <Form.Item style={{display:"flex",justifyContent:"center"}}><Button style={{backgroundColor:"#4A90E2",color:"white"}}>Log in</Button></Form.Item>
-</Form>
-
+        <Form layout="vertical" style={{ width: '100%' }} onFinish={handleLogin}>
+          <Form.Item
+            name="email"
+            label={<span style={{ color: '#4A90E2', fontWeight: 500, fontSize: "15px" }}>Email</span>}
+            rules={[{ required: true, message: 'Please enter your email' }]}
+          >
+            <Input style={{ color: '#4A90E2' }} />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            label={<span style={{ color: '#4A90E2', fontWeight: 500, fontSize: "15px" }}>Password</span>}
+            rules={[{ required: true, message: 'Please enter your password' }]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item style={{ display: "flex", justifyContent: "center" }}>
+            <Button
+              htmlType="submit"
+              loading={loading}
+              style={{ backgroundColor: "#4A90E2", color: "white" }}
+            >
+              Log in
+            </Button>
+          </Form.Item>
+        </Form>
       </div>
     </div>
   );
