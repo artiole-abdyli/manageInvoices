@@ -1,76 +1,142 @@
-'use client';
+"use client";
 
-import { Button, Form, Input, Layout, Menu, Modal, Table, Typography } from 'antd';
 import {
-  HomeOutlined,
-  UserOutlined,
-  SettingOutlined,
-  UsergroupAddOutlined,
-} from '@ant-design/icons';
-import { useState } from 'react';
-import Title from 'antd/es/skeleton/Title';
+  Button,
+  Form,
+  Input,
+  Layout,
+  Menu,
+  Modal,
+  Space,
+  Table,
+  Typography,
+} from "antd";
+import { UsergroupAddOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import { Content } from "antd/es/layout/layout";
 
-const { Header, Content, Footer, Sider } = Layout;
-const columns=[{
-    title:"Company name",dataIndex:"company_name",
-    key:"company_name"
-},
-{
-    title:"Company email",dataIndex:"company_email",key:"company_email"
-},
-{title:"Company employees",dataIndex:"company_employees",key:"company_employees"}];
+const { Sider } = Layout;
+const columns = [
+  {
+    title: "Company name",
+    dataIndex: "company_name",
+    key: "company_name",
+  },
+  {
+    title: "Company email",
+    dataIndex: "company_email",
+    key: "company_email",
+  },
+  {
+    title: "Company employees",
+    dataIndex: "company_employees",
+    key: "company_employees",
+  },
+];
 
 export default function DashboardPage() {
-  const [isCreateModalOpen,setIsCreateModalOpen]=useState<boolean>(false);
-const addModal=()=>{
-  setIsCreateModalOpen(true);
-}
-const closeModal=()=>{
-  setIsCreateModalOpen(false);
-}
+  const [form] = Form.useForm();
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  const openModal = () => setIsCreateModalOpen(true);
+  const closeModal = () => {
+    form.resetFields();
+    setIsCreateModalOpen(false);
+  };
+
+  const handleSubmit = (values: any) => {
+    console.log("New company:", values);
+    closeModal();
+  };
+
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sider width={300} style={{backgroundColor:"#4A90E2"}}>
-       
-        <Menu style={{backgroundColor:"#4A90E2"}} mode="inline" defaultSelectedKeys={['1']}>
-          <Menu.Item key="1" style={{fontSize:"10px",color:"white",backgroundColor:"#4A90E2"}} icon={<UsergroupAddOutlined 
-             />}>
+    <Layout style={{ minHeight: "100vh" }}>
+      <Sider width={300} style={{ backgroundColor: "#4A90E2" }}>
+        <Menu mode="inline" defaultSelectedKeys={["1"]} theme="dark">
+          <Menu.Item key="1" icon={<UsergroupAddOutlined />}>
             Companies
           </Menu.Item>
-         
         </Menu>
       </Sider>
+
       <Layout>
+        <Modal
+          title={<Typography.Title level={4}>Create Company</Typography.Title>}
+          centered
+          width={600}
+          open={isCreateModalOpen}
+          onCancel={closeModal}
+          okText="Create"
+          cancelText="Cancel"
+          onOk={() => form.submit()}
+          destroyOnClose
+        >
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleSubmit}
+            requiredMark={false}
+          >
+            <Space direction="vertical" size="large" style={{ width: "100%" }}>
+              <Form.Item
+                name="company_name"
+                label="Company Name"
+                rules={[{ required: true, message: "Please enter a name" }]}
+              >
+                <Input placeholder="e.g. Acme Corp" />
+              </Form.Item>
+
+              <Form.Item
+                name="company_email"
+                label="Email"
+                rules={[
+                  {
+                    required: true,
+                    type: "email",
+                    message: "Enter a valid email",
+                  },
+                ]}
+              >
+                <Input placeholder="e.g. contact@acme.com" />
+              </Form.Item>
+
+              <Form.Item
+                name="password"
+                label="Password"
+                rules={[{ required: true, message: "Please set a password" }]}
+              >
+                <Input.Password placeholder="••••••••" />
+              </Form.Item>
+
+              <Form.Item
+                name="company_employees"
+                label="Number of Employees"
+                rules={[
+                  { required: true, message: "Please specify employee count" },
+                ]}
+              >
+                <Input type="number" placeholder="e.g. 50" />
+              </Form.Item>
+            </Space>
+          </Form>
+        </Modal>
+
         <Content style={{ padding: 30 }}>
-          <Table    title={() => (
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span>My Table Title</span>
-          <Button type="primary" onClick={() => addModal()}>
-           +
-          </Button>
-        </div>
-      )}dataSource={columns} columns={columns}  />
+          <Table
+            title={() => (
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span>Companies</span>
+                <Button type="primary" onClick={openModal}>
+                  +
+                </Button>
+              </div>
+            )}
+            dataSource={[]}
+            columns={columns}
+            rowKey="company_name"
+          />
         </Content>
       </Layout>
-      <Modal open={isCreateModalOpen} onCancel={closeModal}>
-        <div style={{padding:"20px"}}>
-      <Typography style={{padding:"10px"}}>Create a company</Typography>
-<Form>
-          <Form.Item label="Company name">
-<Input type="text"  />
-          </Form.Item>
-          <Form.Item label="Email">
-<Input type="email"/>
-          </Form.Item>
-          <Form.Item label="Password">
-            <Input type="password"/>
-          </Form.Item>
-          <Form.Item label="Employees number">
-            <Input type="text"/>
-          </Form.Item>
-         </Form>
-        </div>
-        </Modal>
     </Layout>
   );
 }
