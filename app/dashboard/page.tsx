@@ -14,6 +14,7 @@ import {
 import { UsergroupAddOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { Content } from "antd/es/layout/layout";
+import { useAuth } from "../context/AppContext";
 
 const { Sider } = Layout;
 const columns = [
@@ -37,7 +38,9 @@ const columns = [
 export default function DashboardPage() {
   const [form] = Form.useForm();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
+  const { user, isLoading } = useAuth();
+  console.log("user", user);
+  // console.log("role", role);
   const openModal = () => setIsCreateModalOpen(true);
   const closeModal = () => {
     form.resetFields();
@@ -52,11 +55,7 @@ export default function DashboardPage() {
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider width={300} style={{ backgroundColor: "#4A90E2" }}>
-        <Menu mode="inline" defaultSelectedKeys={["1"]} theme="dark">
-          <Menu.Item key="1" icon={<UsergroupAddOutlined />}>
-            Companies
-          </Menu.Item>
-        </Menu>
+        <Menu mode="inline" defaultSelectedKeys={["1"]} theme="dark"></Menu>
       </Sider>
 
       <Layout>
