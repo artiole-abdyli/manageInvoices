@@ -62,7 +62,7 @@ export default function DashboardPage() {
           <Menu.Item key="3" icon={<UsergroupAddOutlined />}>
             Reservations
           </Menu.Item>
-          <Menu.Item key="3" icon={<UsergroupAddOutlined />}>
+          <Menu.Item key="4" icon={<UsergroupAddOutlined />}>
             Invoices
           </Menu.Item>
         </Menu>
