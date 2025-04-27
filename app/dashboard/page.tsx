@@ -39,8 +39,6 @@ export default function DashboardPage() {
   const [form] = Form.useForm();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const { user, isLoading } = useAuth();
-  console.log("user", user);
-  // console.log("role", role);
   const openModal = () => setIsCreateModalOpen(true);
   const closeModal = () => {
     form.resetFields();
@@ -48,18 +46,23 @@ export default function DashboardPage() {
   };
 
   const handleSubmit = (values: any) => {
-    console.log("New company:", values);
     closeModal();
   };
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider width={300} style={{ backgroundColor: "#4A90E2" }}>
-        <Menu mode="inline" defaultSelectedKeys={["1"]} theme="dark"></Menu>
+        <Menu mode="inline" defaultSelectedKeys={["1"]} theme="dark">
+          {user?.role == "admin" && (
+            <Menu.Item key="1" icon={<UsergroupAddOutlined />}>
+              Reservations
+            </Menu.Item>
+          )}
+        </Menu>
       </Sider>
 
       <Layout>
-        <Modal
+        {/* <Modal
           title={<Typography.Title level={4}>Create Company</Typography.Title>}
           centered
           width={600}
@@ -118,23 +121,9 @@ export default function DashboardPage() {
               </Form.Item>
             </Space>
           </Form>
-        </Modal>
+        </Modal> */}
 
-        <Content style={{ padding: 30 }}>
-          <Table
-            title={() => (
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>Companies</span>
-                <Button type="primary" onClick={openModal}>
-                  +
-                </Button>
-              </div>
-            )}
-            dataSource={[]}
-            columns={columns}
-            rowKey="company_name"
-          />
-        </Content>
+        <Content style={{ padding: 30 }}></Content>
       </Layout>
     </Layout>
   );

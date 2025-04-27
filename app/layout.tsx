@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Invoice Management System",
+  title: "Chique dolls exclusive",
 };
 
 export default function RootLayout({

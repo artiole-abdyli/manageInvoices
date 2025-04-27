@@ -40,8 +40,12 @@ export const LoginModal = () => {
   return (
     <div
       style={{
-        backgroundColor: "#f5f5f5",
-        height: "100vh",
+        /* full-bleed image or pattern */
+        background:
+          "url('/images/chique_dolls_logo.svg') no-repeat center/cover",
+        height: "80vh",
+
+        /* center your form */
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -52,19 +56,15 @@ export const LoginModal = () => {
           backgroundColor: "white",
           padding: 24,
           borderRadius: 15,
-          maxWidth: "30%",
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
           boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          maxWidth: "400px",
+          width: "90%",
         }}
       >
         <Typography
-          style={{ color: "#4A90E2", fontSize: "20px", marginBottom: 24 }}
+          style={{ color: "black", fontSize: "20px", marginBottom: 24 }}
         >
-          Please log in to continue
+          Chique dolls exclusive
         </Typography>
 
         <Form
@@ -76,20 +76,20 @@ export const LoginModal = () => {
             name="email"
             label={
               <span
-                style={{ color: "#4A90E2", fontWeight: 500, fontSize: "15px" }}
+                style={{ color: "black", fontWeight: 500, fontSize: "15px" }}
               >
                 Email
               </span>
             }
             rules={[{ required: true, message: "Please enter your email" }]}
           >
-            <Input style={{ color: "#4A90E2" }} />
+            <Input style={{ color: "black" }} />
           </Form.Item>
           <Form.Item
             name="password"
             label={
               <span
-                style={{ color: "#4A90E2", fontWeight: 500, fontSize: "15px" }}
+                style={{ color: "black", fontWeight: 500, fontSize: "15px" }}
               >
                 Password
               </span>
@@ -102,7 +102,7 @@ export const LoginModal = () => {
             <Button
               htmlType="submit"
               loading={loading}
-              style={{ backgroundColor: "#4A90E2", color: "white" }}
+              style={{ backgroundColor: "black", color: "white" }}
             >
               Log in
             </Button>
