@@ -53,11 +53,18 @@ export default function DashboardPage() {
     <Layout style={{ minHeight: "100vh" }}>
       <Sider width={300} style={{ backgroundColor: "#4A90E2" }}>
         <Menu mode="inline" defaultSelectedKeys={["1"]} theme="dark">
-          {user?.role == "admin" && (
-            <Menu.Item key="1" icon={<UsergroupAddOutlined />}>
-              Reservations
-            </Menu.Item>
-          )}
+          <Menu.Item key="1" icon={<UsergroupAddOutlined />}>
+            Clients
+          </Menu.Item>
+          <Menu.Item key="2" icon={<UsergroupAddOutlined />}>
+            Dresses
+          </Menu.Item>
+          <Menu.Item key="3" icon={<UsergroupAddOutlined />}>
+            Reservations
+          </Menu.Item>
+          <Menu.Item key="3" icon={<UsergroupAddOutlined />}>
+            Invoices
+          </Menu.Item>
         </Menu>
       </Sider>
 
