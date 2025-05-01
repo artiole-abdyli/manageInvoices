@@ -15,28 +15,12 @@ import { UsergroupAddOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { Content } from "antd/es/layout/layout";
 import { useAuth } from "../context/AppContext";
-
-const { Sider } = Layout;
-const columns = [
-  {
-    title: "Company name",
-    dataIndex: "company_name",
-    key: "company_name",
-  },
-  {
-    title: "Company email",
-    dataIndex: "company_email",
-    key: "company_email",
-  },
-  {
-    title: "Company employees",
-    dataIndex: "company_employees",
-    key: "company_employees",
-  },
-];
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
   const [form] = Form.useForm();
+  const { Sider } = Layout;
+  const router = useRouter();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const { user, isLoading } = useAuth();
   const openModal = () => setIsCreateModalOpen(true);
@@ -56,7 +40,11 @@ export default function DashboardPage() {
           <Menu.Item key="1" icon={<UsergroupAddOutlined />}>
             Clients
           </Menu.Item>
-          <Menu.Item key="2" icon={<UsergroupAddOutlined />}>
+          <Menu.Item
+            key="2"
+            icon={<UsergroupAddOutlined />}
+            onClick={() => router.push("/products")}
+          >
             Dresses
           </Menu.Item>
           <Menu.Item key="3" icon={<UsergroupAddOutlined />}>
@@ -69,67 +57,6 @@ export default function DashboardPage() {
       </Sider>
 
       <Layout>
-        {/* <Modal
-          title={<Typography.Title level={4}>Create Company</Typography.Title>}
-          centered
-          width={600}
-          open={isCreateModalOpen}
-          onCancel={closeModal}
-          okText="Create"
-          cancelText="Cancel"
-          onOk={() => form.submit()}
-          destroyOnClose
-        >
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={handleSubmit}
-            requiredMark={false}
-          >
-            <Space direction="vertical" size="large" style={{ width: "100%" }}>
-              <Form.Item
-                name="company_name"
-                label="Company Name"
-                rules={[{ required: true, message: "Please enter a name" }]}
-              >
-                <Input placeholder="e.g. Acme Corp" />
-              </Form.Item>
-
-              <Form.Item
-                name="company_email"
-                label="Email"
-                rules={[
-                  {
-                    required: true,
-                    type: "email",
-                    message: "Enter a valid email",
-                  },
-                ]}
-              >
-                <Input placeholder="e.g. contact@acme.com" />
-              </Form.Item>
-
-              <Form.Item
-                name="password"
-                label="Password"
-                rules={[{ required: true, message: "Please set a password" }]}
-              >
-                <Input.Password placeholder="••••••••" />
-              </Form.Item>
-
-              <Form.Item
-                name="company_employees"
-                label="Number of Employees"
-                rules={[
-                  { required: true, message: "Please specify employee count" },
-                ]}
-              >
-                <Input type="number" placeholder="e.g. 50" />
-              </Form.Item>
-            </Space>
-          </Form>
-        </Modal> */}
-
         <Content style={{ padding: 30 }}></Content>
       </Layout>
     </Layout>
