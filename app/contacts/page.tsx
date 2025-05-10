@@ -1,9 +1,8 @@
 "use client";
 import { Button, Form, Input, Modal, Table, message } from "antd";
 import { useForm } from "antd/es/form/Form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-// ID is optional because we don't send it when creating
 type Contact = {
   id?: number;
   firstname: string;
@@ -32,25 +31,49 @@ export default function ContactsPage() {
     setIsModalOpen(false);
   };
 
+  const fetchContacts = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/contacts", {
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch contacts");
+
+      const rawData = await response.json();
+      console.log("API rawData:", rawData);
+
+      const contactsArray = Array.isArray(rawData) ? rawData : rawData.data;
+      if (!Array.isArray(contactsArray))
+        throw new Error("Contacts are not an array");
+
+      setContacts(contactsArray);
+    } catch (error) {
+      console.error(error);
+      message.error("Failed to load contacts");
+    }
+  };
+
+  useEffect(() => {
+    fetchContacts();
+  }, []);
+
   const handleCreate = async (values: Omit<Contact, "id">) => {
     try {
-      // convert form values to query string
-      const queryParams = new URLSearchParams(values as any).toString();
-
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/contacts?${queryParams}`,
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-          },
-        }
-      );
+      const response = await fetch("http://127.0.0.1:8000/api/contacts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(values),
+      });
 
       if (!response.ok) throw new Error("Failed to create contact");
 
       const createdContact: Contact = await response.json();
-      setContacts((prev) => [...prev, createdContact]); // ✅ this is OK now
+      setContacts((prev) => [...prev, createdContact]);
       message.success("Contact created successfully!");
       closeModal();
     } catch (error) {
@@ -65,8 +88,7 @@ export default function ContactsPage() {
         style={{
           display: "flex",
           justifyContent: "flex-end",
-          marginTop: "20px",
-          marginBottom: "20px",
+          margin: "20px 0",
         }}
       >
         <Button type="primary" onClick={showModal}>
@@ -87,21 +109,21 @@ export default function ContactsPage() {
           <Form.Item
             name="firstname"
             label="First name"
-            rules={[{ required: true, message: "Please enter first name" }]}
+            rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="lastname"
             label="Last name"
-            rules={[{ required: true, message: "Please enter last name" }]}
+            rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="phone_number"
             label="Phone number"
-            rules={[{ required: true, message: "Please enter phone number" }]}
+            rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
