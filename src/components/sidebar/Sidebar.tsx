@@ -31,12 +31,10 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
     >
       <Layout style={{ minHeight: "100vh" }}>
         <Sider
-          collapsible
           collapsed={collapsed}
           onCollapse={setCollapsed}
           width={220}
           breakpoint="lg"
-          zeroWidthTriggerStyle={{ top: 12 }}
         >
           <div
             style={{
