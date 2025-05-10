@@ -1,6 +1,19 @@
-import { Button, Table } from "antd";
+"use client";
+import { Button, Form, Modal, Table, message } from "antd";
+import { useForm } from "antd/es/form/Form";
+import { useState } from "react";
+type Product = {
+  id?: number;
+  name?: string;
+  price?: string;
+  description?: string;
+  number_of_reservation?: string;
+};
 
 export default function ProductsPage() {
+  const [form] = useForm();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const columns = [
     {
       title: "Name",
@@ -19,6 +32,38 @@ export default function ProductsPage() {
       name: "number of reservation",
     },
   ];
+  const handleCreate = async (values: Omit<[Product], "id">) => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+      if (!response.ok) throw new Error("Failed to create product");
+
+      const responseData = await response.json();
+
+      // Use responseData.data if your Laravel returns the contact inside a `data` key
+      const createdContact = responseData.data ?? responseData;
+
+      // setContacts((prev) => [...prev, createdContact]);
+
+      message.success("Contact created successfully!");
+      // closeModal();
+    } catch (error) {
+      console.error(error);
+      message.error("Failed to create contact");
+    }
+  };
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
   return (
     <>
       <div
@@ -33,9 +78,16 @@ export default function ProductsPage() {
           Products of Chique dolls
         </h1>
 
-        <Button type="primary">Create +</Button>
+        <Button type="primary" onClick={handleOpenModal}>
+          Create +
+        </Button>
       </div>{" "}
       <Table columns={columns}></Table>
+      <Modal open={isModalOpen} onCancel={handleCloseModal}>
+        <Form layout="vertical" form={form}>
+          <Form.Item></Form.Item>
+        </Form>
+      </Modal>
     </>
   );
 }

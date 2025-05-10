@@ -81,7 +81,6 @@ export default function ContactsPage() {
       if (!response.ok) throw new Error("Failed to fetch contacts");
 
       const rawData = await response.json();
-      console.log("API rawData:", rawData);
 
       const contactsArray = Array.isArray(rawData) ? rawData : rawData.data;
       if (!Array.isArray(contactsArray))
