@@ -1,5 +1,5 @@
 "use client";
-import { Button, Form, Input, Modal, Table, message } from "antd";
+import { Button, Form, Input, Modal, Table, message, Popconfirm } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useEffect, useState } from "react";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
@@ -16,6 +16,26 @@ export default function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = useForm();
+  const handleDelete = async (id?: number) => {
+    if (!id) return;
+
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/contacts/${id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) throw new Error("Failed to delete contact");
+
+      setContacts((prev) => prev.filter((c) => c.id !== id));
+      message.success("Contact deleted successfully!");
+    } catch (error) {
+      console.error(error);
+      message.error("Failed to delete contact");
+    }
+  };
 
   const columns = [
     { name: "firstname", dataIndex: "firstname", title: "First name" },
@@ -27,11 +47,18 @@ export default function ContactsPage() {
       name: "action",
       dataIndex: "action",
       title: "Action",
-      render: () => (
-        <div>
-          <EditOutlined style={{ paddingRight: "10px" }} />
+      render: (_: any, record: Contact) => (
+        <div style={{ display: "flex", gap: "10px" }}>
+          <EditOutlined style={{ cursor: "pointer" }} />
 
-          <DeleteOutlined style={{ color: "red" }} />
+          <Popconfirm
+            title="Are you sure to delete this contact?"
+            onConfirm={() => handleDelete(record.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <DeleteOutlined style={{ color: "red", cursor: "pointer" }} />
+          </Popconfirm>
         </div>
       ),
     },
