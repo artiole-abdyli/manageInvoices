@@ -15,16 +15,18 @@ import {
   ReconciliationOutlined,
 } from "@ant-design/icons";
 import { url } from "inspector";
+import { useRouter } from "next/navigation";
 
 const { Sider, Header, Content } = Layout;
 const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const router = useRouter();
 
   return (
     <ConfigProvider
       theme={{
-        token: { colorPrimary: "#1677ff" }, // your brand colour
-        components: { Layout: { headerBg: "#fff" } }, // example override
+        token: { colorPrimary: "#1677ff" },
+        components: { Layout: { headerBg: "#fff" } },
       }}
     >
       <Layout style={{ minHeight: "100vh" }}>
@@ -32,9 +34,9 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
           collapsible
           collapsed={collapsed}
           onCollapse={setCollapsed}
-          width={220} // full width when expanded
-          breakpoint="lg" // auto-collapse on < 992 px
-          zeroWidthTriggerStyle={{ top: 12 }} // icon position tweak
+          width={220}
+          breakpoint="lg"
+          zeroWidthTriggerStyle={{ top: 12 }}
         >
           <div
             style={{
@@ -42,11 +44,11 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
               marginTop: 16,
               borderRadius: "10px",
               marginLeft: 36,
-              overflow: "hidden", // rounds the image corners
-              backgroundImage: `url('/images/chique_dolls_logo.png')`, // no “/public” prefix
-              backgroundSize: "contain", // keep logo proportions
-              backgroundRepeat: "no-repeat", // don’t tile
-              backgroundPosition: "left", // always centered
+              overflow: "hidden",
+              backgroundImage: `url('/images/chique_dolls_logo.png')`,
+              backgroundSize: "contain",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "left",
             }}
           ></div>
 
@@ -54,6 +56,9 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
             theme="dark"
             mode="inline"
             defaultSelectedKeys={["dashboard"]}
+            onClick={({ key }) => {
+              router.push(`/${key}`);
+            }}
             items={[
               {
                 key: "contacts",
