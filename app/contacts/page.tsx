@@ -45,7 +45,6 @@ export default function ContactsPage() {
     { name: "country", dataIndex: "country", title: "Country" },
     {
       name: "action",
-      dataIndex: "action",
       title: "Action",
       render: (_: any, record: Contact) => (
         <div style={{ display: "flex", gap: "10px" }}>
@@ -96,7 +95,7 @@ export default function ContactsPage() {
 
   useEffect(() => {
     fetchContacts();
-  }, []);
+  }, [contacts]);
 
   const handleCreate = async (values: Omit<Contact, "id">) => {
     try {
@@ -111,8 +110,13 @@ export default function ContactsPage() {
 
       if (!response.ok) throw new Error("Failed to create contact");
 
-      const createdContact: Contact = await response.json();
+      const responseData = await response.json();
+
+      // Use responseData.data if your Laravel returns the contact inside a `data` key
+      const createdContact = responseData.data ?? responseData;
+
       setContacts((prev) => [...prev, createdContact]);
+
       message.success("Contact created successfully!");
       closeModal();
     } catch (error) {
