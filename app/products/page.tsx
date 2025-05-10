@@ -1,5 +1,5 @@
 "use client";
-import { Button, Form, Modal, Table, message } from "antd";
+import { Button, Form, Input, Modal, Table, message } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useState } from "react";
 type Product = {
@@ -83,9 +83,25 @@ export default function ProductsPage() {
         </Button>
       </div>{" "}
       <Table columns={columns}></Table>
-      <Modal open={isModalOpen} onCancel={handleCloseModal}>
-        <Form layout="vertical" form={form}>
-          <Form.Item></Form.Item>
+      <Modal
+        open={isModalOpen}
+        onCancel={handleCloseModal}
+        title="Create product"
+      >
+        <Form
+          layout="vertical"
+          form={form}
+          style={{ paddingTop: "20px", paddingBottom: "20px" }}
+        >
+          <Form.Item label="Name">
+            <Input name="name" />
+          </Form.Item>
+          <Form.Item label="Price">
+            <Input name="Price" />
+          </Form.Item>
+          <Form.Item label="Short description">
+            <Input name="Short description" />
+          </Form.Item>
         </Form>
       </Modal>
     </>
