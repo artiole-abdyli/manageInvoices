@@ -1,19 +1,69 @@
 "use client";
-import { Button, Form, Input, Modal, Table, message } from "antd";
+import { Button, Form, Input, Modal, Popconfirm, Table, message } from "antd";
 import { useForm } from "antd/es/form/Form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+
 type Product = {
   id?: number;
-  name?: string;
-  price?: string;
-  description?: string;
-  number_of_reservation?: string;
+  name?: any;
+  price?: number;
+  description?: any;
+  number_of_reservation?: any;
 };
 
 export default function ProductsPage() {
   const [form] = useForm();
+  const [products, setProducts] = useState<Product[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newProductCreated, setNewProductCreated] = useState(false);
+  const [productDeleted, setProductDeleted] = useState(false);
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/products", {
+        headers: {
+          Accept: "application/json",
+        },
+      });
 
+      if (!response.ok) throw new Error("Failed to fetch products");
+
+      const rawData = await response.json();
+
+      const productsArray = Array.isArray(rawData) ? rawData : rawData.data;
+      if (!Array.isArray(productsArray))
+        throw new Error("Products are not an array");
+
+      setProducts(productsArray);
+    } catch (error) {
+      console.error(error);
+      message.error("Failed to load products");
+    }
+  };
+  const handleDelete = async (id?: number) => {
+    if (!id) return;
+
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/products/${id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+        },
+      });
+      setProductDeleted(true);
+
+      if (!response.ok) throw new Error("Failed to delete product");
+
+      message.success("Product deleted successfully!");
+    } catch (error) {
+      console.error(error);
+      message.error("Failed to delete product");
+    }
+  };
+  useEffect(() => {
+    fetchProducts();
+  }),
+    [newProductCreated, productDeleted];
   const columns = [
     {
       title: "Name",
@@ -31,8 +81,25 @@ export default function ProductsPage() {
       dataIndex: "number_of_reservation",
       name: "number of reservation",
     },
+    {
+      name: "action",
+      title: "Action",
+      render: (_: any, record: Product) => (
+        <div>
+          <EditOutlined style={{ cursor: "pointer", marginRight: "10px" }} />
+          <Popconfirm
+            title="Are you sure to delete this product?"
+            onConfirm={() => handleDelete(record.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <DeleteOutlined style={{ color: "red", cursor: "pointer" }} />
+          </Popconfirm>
+        </div>
+      ),
+    },
   ];
-  const handleCreate = async (values: Omit<[Product], "id">) => {
+  const handleCreate = async (values: Omit<Product, "id">) => {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/products", {
         method: "POST",
@@ -42,22 +109,17 @@ export default function ProductsPage() {
         },
         body: JSON.stringify(values),
       });
+      setNewProductCreated(true);
       if (!response.ok) throw new Error("Failed to create product");
 
-      const responseData = await response.json();
-
-      // Use responseData.data if your Laravel returns the contact inside a `data` key
-      const createdContact = responseData.data ?? responseData;
-
-      // setContacts((prev) => [...prev, createdContact]);
-
-      message.success("Contact created successfully!");
-      // closeModal();
+      message.success("Product created successfully!");
+      handleCloseModal();
     } catch (error) {
       console.error(error);
-      message.error("Failed to create contact");
+      message.error("Failed to create product");
     }
   };
+
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -82,25 +144,27 @@ export default function ProductsPage() {
           Create +
         </Button>
       </div>{" "}
-      <Table columns={columns}></Table>
+      <Table columns={columns} dataSource={products}></Table>
       <Modal
         open={isModalOpen}
         onCancel={handleCloseModal}
         title="Create product"
+        onOk={() => form.submit()}
       >
         <Form
           layout="vertical"
           form={form}
+          onFinish={handleCreate}
           style={{ paddingTop: "20px", paddingBottom: "20px" }}
         >
-          <Form.Item label="Name">
+          <Form.Item name="name" label="Name">
             <Input name="name" />
           </Form.Item>
-          <Form.Item label="Price">
-            <Input name="Price" />
+          <Form.Item name="price" label="Price">
+            <Input name="price" />
           </Form.Item>
-          <Form.Item label="Short description">
-            <Input name="Short description" />
+          <Form.Item name="short_description" label="Short description">
+            <Input name="short_description" />
           </Form.Item>
         </Form>
       </Modal>

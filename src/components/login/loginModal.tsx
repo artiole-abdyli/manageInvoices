@@ -29,7 +29,7 @@ export const LoginModal = () => {
       localStorage.setItem("token", data.token);
       message.success("Login successful!");
 
-      router.push("/dashboard");
+      router.push("/contacts");
     } catch (error: any) {
       message.error(error.message);
     } finally {
