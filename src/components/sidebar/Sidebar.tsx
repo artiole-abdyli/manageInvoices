@@ -45,6 +45,7 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
               borderRadius: "10px",
               marginLeft: 36,
               overflow: "hidden",
+              marginBottom: "50px",
               backgroundImage: `url('/images/chique_dolls_logo.png')`,
               backgroundSize: "contain",
               backgroundRepeat: "no-repeat",

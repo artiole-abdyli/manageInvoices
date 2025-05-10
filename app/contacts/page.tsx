@@ -14,6 +14,7 @@ type Contact = {
 
 export default function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
+  const [newContactCreated, setNewContactCreated] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = useForm();
   const handleDelete = async (id?: number) => {
@@ -95,7 +96,7 @@ export default function ContactsPage() {
 
   useEffect(() => {
     fetchContacts();
-  }, [contacts]);
+  }, [newContactCreated]);
 
   const handleCreate = async (values: Omit<Contact, "id">) => {
     try {
@@ -107,7 +108,7 @@ export default function ContactsPage() {
         },
         body: JSON.stringify(values),
       });
-
+      setNewContactCreated(true);
       if (!response.ok) throw new Error("Failed to create contact");
 
       const responseData = await response.json();
