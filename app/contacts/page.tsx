@@ -2,7 +2,7 @@
 import { Button, Form, Input, Modal, Table, message } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useEffect, useState } from "react";
-
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 type Contact = {
   id?: number;
   firstname: string;
@@ -23,6 +23,18 @@ export default function ContactsPage() {
     { name: "phone_number", dataIndex: "phone_number", title: "Phone number" },
     { name: "city", dataIndex: "city", title: "City" },
     { name: "country", dataIndex: "country", title: "Country" },
+    {
+      name: "action",
+      dataIndex: "action",
+      title: "Action",
+      render: () => (
+        <div>
+          <EditOutlined style={{ paddingRight: "10px" }} />
+
+          <DeleteOutlined style={{ color: "red" }} />
+        </div>
+      ),
+    },
   ];
 
   const showModal = () => setIsModalOpen(true);
