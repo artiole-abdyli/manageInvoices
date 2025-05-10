@@ -87,10 +87,15 @@ export default function ContactsPage() {
       <div
         style={{
           display: "flex",
-          justifyContent: "flex-end",
+          justifyContent: "space-between",
+          alignItems: "center",
           margin: "20px 0",
         }}
       >
+        <h1 style={{ margin: 0, fontSize: "20px", fontWeight: "500" }}>
+          Contacts of Chique dolls
+        </h1>
+
         <Button type="primary" onClick={showModal}>
           Create +
         </Button>
@@ -104,8 +109,14 @@ export default function ContactsPage() {
         onCancel={closeModal}
         onOk={() => form.submit()}
         okText="Create"
+        width={600}
       >
-        <Form layout="vertical" form={form} onFinish={handleCreate}>
+        <Form
+          layout="vertical"
+          form={form}
+          onFinish={handleCreate}
+          style={{ marginTop: "40px", marginBottom: "60px" }}
+        >
           <Form.Item
             name="firstname"
             label="First name"
