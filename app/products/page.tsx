@@ -21,18 +21,18 @@ export default function ProductsPage() {
   const fetchProducts = async () => {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/products", {
-        headers: {
-          Accept: "application/json",
-        },
+        headers: { Accept: "application/json" },
       });
 
       if (!response.ok) throw new Error("Failed to fetch products");
 
-      const rawData = await response.json();
+      const rawData = await response.json(); // ✅ only call this once
+      console.log("product json data", rawData.data);
 
       const productsArray = Array.isArray(rawData) ? rawData : rawData.data;
-      if (!Array.isArray(productsArray))
+      if (!Array.isArray(productsArray)) {
         throw new Error("Products are not an array");
+      }
 
       setProducts(productsArray);
     } catch (error) {
@@ -40,6 +40,7 @@ export default function ProductsPage() {
       message.error("Failed to load products");
     }
   };
+
   const handleDelete = async (id?: number) => {
     if (!id) return;
 
@@ -62,8 +63,7 @@ export default function ProductsPage() {
   };
   useEffect(() => {
     fetchProducts();
-  }),
-    [newProductCreated, productDeleted];
+  }, [newProductCreated, productDeleted]);
   const columns = [
     {
       title: "Name",
@@ -163,8 +163,8 @@ export default function ProductsPage() {
           <Form.Item name="price" label="Price">
             <Input name="price" />
           </Form.Item>
-          <Form.Item name="short_description" label="Short description">
-            <Input name="short_description" />
+          <Form.Item name="description" label="Short description">
+            <Input name="description" />
           </Form.Item>
         </Form>
       </Modal>
