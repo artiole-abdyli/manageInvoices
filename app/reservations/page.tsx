@@ -10,10 +10,24 @@ import {
   Row,
   Select,
   Col,
+  message,
 } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+type Reservation = {
+  date?: any;
+  returning_date?: any;
+  desposit?: number;
+  price?: number;
+  extra_requirement?: string;
+  remaining_payment?: number;
+  contact_id?: any; //qeto duhesh me ndryshu
+  product_id?: any; //edhe qeto
+};
+
 export default function ReservationsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [newReservationCreated, setNewReservationCreated] = useState(false);
   const columns = [
     {
       name: "date",
@@ -43,6 +57,27 @@ export default function ReservationsPage() {
   const handleClose = () => {
     setIsModalOpen(false);
   };
+
+  const fetchReservations = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/reservations", {
+        headers: { Accept: "application/json" },
+      });
+      if (!response.ok) throw new Error("Failed to fetch reservations");
+      const rawData = await response.json();
+      const reservationsArray = Array.isArray(rawData) ? rawData : rawData.data;
+      if (!Array.isArray(reservationsArray)) {
+        throw new Error("Products are not an array");
+      }
+      setReservations(reservationsArray);
+    } catch (error) {
+      console.log(error);
+      message.error("Failed to load reservations");
+    }
+  };
+  useEffect(() => {
+    fetchReservations();
+  }, [newReservationCreated]);
   return (
     <>
       <div
@@ -61,11 +96,12 @@ export default function ReservationsPage() {
           Create +
         </Button>
       </div>
-      <Table columns={columns}></Table>
+      <Table columns={columns} dataSource={reservations}></Table>
       <Modal
         open={isModalOpen}
         onCancel={handleClose}
-        width={700}
+        width={1000}
+        height={1000}
         title="Create new reservation"
       >
         <Form style={{ paddingTop: "30px", paddingBottom: "30px" }}>
@@ -83,7 +119,7 @@ export default function ReservationsPage() {
             </Select>
           </Form.Item>
 
-          <Form.Item name="contact_id" label="Contact">
+          <Form.Item name="contact_id" label="Client">
             <Select placeholder="Select a contact">
               <Select.Option value={1}>Anna Smith</Select.Option>
               <Select.Option value={2}>John Doe</Select.Option>
