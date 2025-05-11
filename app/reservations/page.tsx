@@ -1,6 +1,9 @@
-import { Button, Table } from "antd";
+"use client";
+import { Button, DatePicker, Form, Input, Modal, Table } from "antd";
+import { useState } from "react";
 
 export default function ReservationsPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const columns = [
     {
       name: "date",
@@ -24,6 +27,12 @@ export default function ReservationsPage() {
       dataIndex: "extra_requirement",
     },
   ];
+  const handleOpen = () => {
+    setIsModalOpen(true);
+  };
+  const handleClose = () => {
+    setIsModalOpen(false);
+  };
   return (
     <>
       <div
@@ -38,9 +47,27 @@ export default function ReservationsPage() {
           Reservations
         </h1>
 
-        <Button type="primary">Create +</Button>
+        <Button type="primary" onClick={handleOpen}>
+          Create +
+        </Button>
       </div>
-      <Table columns={columns}></Table>{" "}
+      <Table columns={columns}></Table>
+      <Modal open={isModalOpen} onCancel={handleClose}>
+        <Form style={{ paddingTop: "30px", paddingBottom: "30px" }}>
+          <Form.Item name="date" label="Date of reservation">
+            <DatePicker />
+          </Form.Item>
+          <Form.Item name="returning_date" label="Returning date">
+            <DatePicker />
+          </Form.Item>
+          <Form.Item name="extra_requirement" label="Extra requirement">
+            <Input.TextArea
+              rows={4}
+              placeholder="Enter extra requirements here..."
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </>
   );
 }
