@@ -12,6 +12,7 @@ import {
   Col,
   message,
 } from "antd";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 type Reservation = {
   date?: any;
@@ -36,19 +37,39 @@ export default function ReservationsPage() {
     },
     {
       name: "date of returning",
-      dataIndex: "date_of_returning",
+      dataIndex: "returning_date",
       title: "Date of returning",
     },
     { name: "contact_id", dataIndex: "contact_id", title: "Contact" },
     {
-      name: "number_of_dresses",
-      dataIndex: "number_of_dresses",
-      title: "Number of dresses",
+      name: "price",
+      dataIndex: "price",
+      title: "Price",
+    },
+    {
+      name: "deposit",
+      dataIndex: "deposit",
+      title: "Deposit",
+    },
+    {
+      name: "Remaining payment",
+      dataIndex: "remaining_payment",
+      title: "Remaining payment",
     },
     {
       name: "extra_requirement",
       title: "Extra requirement",
       dataIndex: "extra_requirement",
+    },
+    {
+      name: "action",
+      title: "Action",
+      render: (_: any, record: Reservation) => (
+        <div>
+          <EditOutlined style={{ marginRight: "5px" }} />
+          <DeleteOutlined style={{ color: "red" }} />
+        </div>
+      ),
     },
   ];
   const handleOpen = () => {
