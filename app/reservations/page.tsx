@@ -11,10 +11,12 @@ import {
   Select,
   Col,
   message,
+  Popconfirm,
 } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 type Reservation = {
+  id?: number | undefined;
   date?: any;
   returning_date?: any;
   desposit?: number;
@@ -29,6 +31,52 @@ export default function ReservationsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [newReservationCreated, setNewReservationCreated] = useState(false);
+  const [deletedReservation, setDeletedReservation] = useState(false);
+  const handleOpen = () => {
+    setIsModalOpen(true);
+  };
+  const handleClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const fetchReservations = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/reservations", {
+        headers: { Accept: "application/json" },
+      });
+      if (!response.ok) throw new Error("Failed to fetch reservations");
+      const rawData = await response.json();
+      const reservationsArray = Array.isArray(rawData) ? rawData : rawData.data;
+      if (!Array.isArray(reservationsArray)) {
+        throw new Error("Products are not an array");
+      }
+      setReservations(reservationsArray);
+    } catch (error) {
+      console.log(error);
+      message.error("Failed to load reservations");
+    }
+  };
+  useEffect(() => {
+    fetchReservations();
+  }, [newReservationCreated, deletedReservation]);
+  const handleDelete = async (id?: number) => {
+    if (!id) return;
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/reservations/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      );
+      setDeletedReservation(true);
+      if (!response.ok) throw new Error("Failed to delete reservation");
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const columns = [
     {
       name: "date",
@@ -67,38 +115,18 @@ export default function ReservationsPage() {
       render: (_: any, record: Reservation) => (
         <div>
           <EditOutlined style={{ marginRight: "5px" }} />
-          <DeleteOutlined style={{ color: "red" }} />
+          <Popconfirm
+            title="Are you sure to delete this reservation?"
+            onConfirm={() => handleDelete(record.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <DeleteOutlined style={{ color: "red", cursor: "pointer" }} />
+          </Popconfirm>
         </div>
       ),
     },
   ];
-  const handleOpen = () => {
-    setIsModalOpen(true);
-  };
-  const handleClose = () => {
-    setIsModalOpen(false);
-  };
-
-  const fetchReservations = async () => {
-    try {
-      const response = await fetch("http://127.0.0.1:8000/api/reservations", {
-        headers: { Accept: "application/json" },
-      });
-      if (!response.ok) throw new Error("Failed to fetch reservations");
-      const rawData = await response.json();
-      const reservationsArray = Array.isArray(rawData) ? rawData : rawData.data;
-      if (!Array.isArray(reservationsArray)) {
-        throw new Error("Products are not an array");
-      }
-      setReservations(reservationsArray);
-    } catch (error) {
-      console.log(error);
-      message.error("Failed to load reservations");
-    }
-  };
-  useEffect(() => {
-    fetchReservations();
-  }, [newReservationCreated]);
   return (
     <>
       <div
