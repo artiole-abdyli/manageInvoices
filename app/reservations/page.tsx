@@ -15,6 +15,7 @@ import {
 } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
+import { useForm } from "antd/es/form/Form";
 type Reservation = {
   id?: number | undefined;
   date?: any;
@@ -32,6 +33,7 @@ export default function ReservationsPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [newReservationCreated, setNewReservationCreated] = useState(false);
   const [deletedReservation, setDeletedReservation] = useState(false);
+  const [form] = useForm();
   const handleOpen = () => {
     setIsModalOpen(true);
   };
@@ -127,6 +129,43 @@ export default function ReservationsPage() {
       ),
     },
   ];
+  const handleCreate = async (values: any) => {
+    try {
+      // Format dates before sending
+      values.date = values.date?.format("YYYY-MM-DD");
+      values.returning_date = values.returning_date?.format("YYYY-MM-DD");
+
+      const response = await fetch("http://127.0.0.1:8000/api/reservations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      // If there's a failure, parse and show it
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Server returned error:", errorData);
+
+        // Optional: show first validation message in UI
+        const firstError = errorData?.errors
+          ? Object.values(errorData.errors)[0]
+          : "Unknown error";
+
+        throw new Error();
+      }
+
+      message.success("Reservation created successfully!");
+      setNewReservationCreated(true);
+      handleClose();
+    } catch (error: any) {
+      console.error("Error creating reservation:", error);
+      message.error(error.message || "Failed to create reservation");
+    }
+  };
+
   return (
     <>
       <div
@@ -152,8 +191,13 @@ export default function ReservationsPage() {
         width={1000}
         height={1000}
         title="Create new reservation"
+        onOk={() => form.submit()}
       >
-        <Form style={{ paddingTop: "30px", paddingBottom: "30px" }}>
+        <Form
+          onFinish={handleCreate}
+          form={form}
+          style={{ paddingTop: "30px", paddingBottom: "30px" }}
+        >
           <Form.Item name="date" label="Date of reservation">
             <DatePicker />
           </Form.Item>
