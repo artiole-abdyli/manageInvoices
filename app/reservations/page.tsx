@@ -16,6 +16,7 @@ import {
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useForm } from "antd/es/form/Form";
+import { ExceptionMap } from "antd/es/result";
 type Reservation = {
   id?: number | undefined;
   date?: any;
@@ -34,7 +35,14 @@ type Product = {
   description?: any;
   number_of_reservation?: any;
 };
-
+type Contact = {
+  id?: number;
+  firstname: string;
+  lastname: string;
+  phone_number: string;
+  city?: string;
+  country?: string;
+};
 export default function ReservationsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -45,7 +53,7 @@ export default function ReservationsPage() {
     setIsModalOpen(true);
   };
   const [productsOptions, setProductsOptions] = useState<Product[]>([]);
-
+  const [contactsOptions, setContactsOptions] = useState<Contact[]>();
   const handleClose = () => {
     setIsModalOpen(false);
   };
@@ -88,6 +96,27 @@ export default function ReservationsPage() {
     } catch (error) {
       console.error(error);
       message.error("Failed to load product options");
+    }
+  };
+
+  const fetchContactsOptions = async () => {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/contact-options",
+        {
+          headers: { Accept: "application/json" },
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to fetch contact options");
+
+      const rawData = await response.json();
+      const optionsArray = Array.isArray(rawData.data) ? rawData.data : [];
+
+      setContactsOptions(optionsArray);
+    } catch (error) {
+      console.error(error);
+      message.error("Failed to load contact options");
     }
   };
 
@@ -198,6 +227,9 @@ export default function ReservationsPage() {
   useEffect(() => {
     fetchProductsOptions();
   }, []);
+  useEffect(() => {
+    fetchContactsOptions();
+  }, []);
 
   return (
     <>
@@ -245,11 +277,11 @@ export default function ReservationsPage() {
             />
           </Form.Item>
           <Form.Item name="contact_id" label="Client">
-            <Select placeholder="Select a contact">
-              <Select.Option value={1}>Anna Smith</Select.Option>
-              <Select.Option value={2}>John Doe</Select.Option>
-              <Select.Option value={3}>Elira Morina</Select.Option>
-            </Select>
+            <Select
+              options={contactsOptions}
+              placeholder="Select a contact"
+              style={{ width: "100%" }}
+            />
           </Form.Item>
 
           <Row gutter={16}>
