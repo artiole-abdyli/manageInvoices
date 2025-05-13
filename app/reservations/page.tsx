@@ -27,6 +27,13 @@ type Reservation = {
   contact_id?: any; //qeto duhesh me ndryshu
   product_id?: any; //edhe qeto
 };
+type Product = {
+  id?: number;
+  name?: any;
+  price?: number;
+  description?: any;
+  number_of_reservation?: any;
+};
 
 export default function ReservationsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,6 +44,8 @@ export default function ReservationsPage() {
   const handleOpen = () => {
     setIsModalOpen(true);
   };
+  const [productsOptions, setProductsOptions] = useState<Product[]>([]);
+
   const handleClose = () => {
     setIsModalOpen(false);
   };
@@ -61,6 +70,27 @@ export default function ReservationsPage() {
   useEffect(() => {
     fetchReservations();
   }, [newReservationCreated, deletedReservation]);
+  const fetchProductsOptions = async () => {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/product-options",
+        {
+          headers: { Accept: "application/json" },
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to fetch product options");
+
+      const rawData = await response.json();
+      const optionsArray = Array.isArray(rawData.data) ? rawData.data : [];
+
+      setProductsOptions(optionsArray);
+    } catch (error) {
+      console.error(error);
+      message.error("Failed to load product options");
+    }
+  };
+
   const handleDelete = async (id?: number) => {
     if (!id) return;
     try {
@@ -165,6 +195,9 @@ export default function ReservationsPage() {
       message.error(error.message || "Failed to create reservation");
     }
   };
+  useEffect(() => {
+    fetchProductsOptions();
+  }, []);
 
   return (
     <>
@@ -205,13 +238,12 @@ export default function ReservationsPage() {
             <DatePicker />
           </Form.Item>
           <Form.Item name="product_id" label="Product">
-            <Select placeholder="Select a product">
-              <Select.Option value={1}>Wedding Dress</Select.Option>
-              <Select.Option value={2}>Evening Gown</Select.Option>
-              <Select.Option value={3}>Bridesmaid Dress</Select.Option>
-            </Select>
+            <Select
+              options={productsOptions}
+              placeholder="Select a product"
+              style={{ width: "100%" }}
+            />
           </Form.Item>
-
           <Form.Item name="contact_id" label="Client">
             <Select placeholder="Select a contact">
               <Select.Option value={1}>Anna Smith</Select.Option>
