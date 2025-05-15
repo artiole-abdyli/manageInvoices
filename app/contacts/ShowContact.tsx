@@ -1,8 +1,9 @@
 "use client";
 
-import { Card, Descriptions, Typography, Space, Button } from "antd";
+import { Card, Descriptions, Typography, Space, Button, Modal } from "antd";
 import { useEffect, useState } from "react";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Form, Input, message } from "antd";
 
 type Props = {
   id: string;
@@ -19,7 +20,12 @@ type Contact = {
 
 export default function ShowContact({ id }: Props) {
   const [contact, setContact] = useState<Contact>();
+  const [openContactModal, setOpenContactModal] = useState(false);
+  const [form] = Form.useForm();
 
+  const handleClose = () => {
+    setOpenContactModal(false);
+  };
   const fetchReservationDetails = async (id: string) => {
     try {
       const response = await fetch(`http://127.0.0.1:8000/api/contact/${id}`, {
@@ -38,6 +44,27 @@ export default function ShowContact({ id }: Props) {
   useEffect(() => {
     fetchReservationDetails(id);
   }, [id]);
+  const handleEditContact = async (values: Contact) => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/contacts/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) throw new Error("Failed to update contact");
+
+      message.success("Contact updated successfully");
+      setOpenContactModal(false);
+      fetchReservationDetails(id); // refresh data
+    } catch (error) {
+      console.error(error);
+      message.error("Failed to update contact");
+    }
+  };
 
   return (
     <div style={{ padding: "15px" }}>
@@ -53,7 +80,11 @@ export default function ShowContact({ id }: Props) {
         <Typography.Title level={2}>Contact #{id}</Typography.Title>
 
         <Space>
-          <Button type="primary" icon={<EditOutlined />}>
+          <Button
+            type="primary"
+            icon={<EditOutlined />}
+            onClick={() => setOpenContactModal(true)}
+          >
             Edit
           </Button>
         </Space>
@@ -76,6 +107,52 @@ export default function ShowContact({ id }: Props) {
           </Descriptions.Item>
         </Descriptions>
       </Card>
+      <Modal
+        title="Edit Contact"
+        open={openContactModal}
+        onCancel={handleClose}
+        onOk={() => form.submit()}
+        okText="Save"
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          initialValues={contact}
+          onFinish={handleEditContact}
+        >
+          <Form.Item
+            name="firstname"
+            label="Firstname"
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="lastname"
+            label="Lastname"
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="phone_number"
+            label="Phone Number"
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item name="city" label="City">
+            <Input />
+          </Form.Item>
+
+          <Form.Item name="country" label="Country">
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 }
