@@ -17,6 +17,7 @@ import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useForm } from "antd/es/form/Form";
 import { ExceptionMap } from "antd/es/result";
+import { useRouter } from "next/navigation";
 type Reservation = {
   id?: number | undefined;
   date?: any;
@@ -49,6 +50,8 @@ export default function ReservationsPage() {
   const [newReservationCreated, setNewReservationCreated] = useState(false);
   const [deletedReservation, setDeletedReservation] = useState(false);
   const [form] = useForm();
+  const router = useRouter();
+
   const handleOpen = () => {
     setIsModalOpen(true);
   };
@@ -175,7 +178,6 @@ export default function ReservationsPage() {
       title: "Action",
       render: (_: any, record: Reservation) => (
         <div>
-          <EditOutlined style={{ marginRight: "5px" }} />
           <Popconfirm
             title="Are you sure to delete this reservation?"
             onConfirm={() => handleDelete(record.id)}
@@ -249,7 +251,18 @@ export default function ReservationsPage() {
           Create +
         </Button>
       </div>
-      <Table columns={columns} dataSource={reservations}></Table>
+      <Table
+        columns={columns}
+        dataSource={reservations}
+        onRow={(record) => {
+          return {
+            onClick: () => {
+              router.push(`/reservations/${record.id}`);
+            },
+            style: { cursor: "pointer" }, // optional: visual cue
+          };
+        }}
+      ></Table>
       <Modal
         open={isModalOpen}
         onCancel={handleClose}
