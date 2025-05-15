@@ -12,8 +12,10 @@ type Reservation = {
   id?: number;
   date?: string;
   returning_date?: string;
+  contact: any;
   deposit?: number;
   price?: number;
+  product?: any;
   extra_requirement?: string;
   remaining_payment?: number;
   contact_id?: number; // You can replace this with full contact info
@@ -33,8 +35,9 @@ export default function ShowReservation({ id }: Props) {
       );
 
       if (!response.ok) throw new Error("Failed to fetch reservation");
-
       const rawData = await response.json();
+      console.log("rawDataa:", rawData);
+
       setReservation(rawData.data);
     } catch (error) {
       console.error(error);
@@ -47,16 +50,12 @@ export default function ShowReservation({ id }: Props) {
 
   return (
     <div style={{ padding: "15px" }}>
-      <Typography.Text type="secondary">
-        Reservations / Show / {id}
-      </Typography.Text>
-
       <Space
         direction="horizontal"
         align="center"
         style={{
           justifyContent: "space-between",
-          width: "100%",
+          width: "900px",
           marginTop: 16,
         }}
       >
@@ -69,7 +68,10 @@ export default function ShowReservation({ id }: Props) {
         </Space>
       </Space>
 
-      <Card title="Reservation Details" style={{ marginTop: 24 }}>
+      <Card
+        title="Reservation Details"
+        style={{ marginTop: 24, width: "900px" }}
+      >
         <Descriptions bordered column={1}>
           <Descriptions.Item label="Start Date">
             {reservation?.date}
@@ -78,10 +80,10 @@ export default function ShowReservation({ id }: Props) {
             {reservation?.returning_date}
           </Descriptions.Item>
           <Descriptions.Item label="Contact">
-            {reservation?.contact_id}
+            {reservation?.contact?.firstname} {reservation?.contact?.lastname}
           </Descriptions.Item>
           <Descriptions.Item label="Product">
-            {reservation?.product_id}
+            {reservation?.product?.name}
           </Descriptions.Item>
           <Descriptions.Item label="Price">
             €{reservation?.price}
