@@ -3,6 +3,9 @@ import { Button, Form, Input, Modal, Table, message, Popconfirm } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useEffect, useState } from "react";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Router } from "next/router";
+import { useRouter } from "next/navigation";
+
 type Contact = {
   id?: number;
   firstname: string;
@@ -17,6 +20,8 @@ export default function ContactsPage() {
   const [newContactCreated, setNewContactCreated] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = useForm();
+  const router = useRouter();
+
   const handleDelete = async (id?: number) => {
     if (!id) return;
 
@@ -53,7 +58,10 @@ export default function ContactsPage() {
 
           <Popconfirm
             title="Are you sure to delete this contact?"
-            onConfirm={() => handleDelete(record.id)}
+            onConfirm={(e) => {
+              e?.stopPropagation();
+              handleDelete(record.id);
+            }}
             okText="Yes"
             cancelText="No"
           >
@@ -144,7 +152,19 @@ export default function ContactsPage() {
         </Button>
       </div>
 
-      <Table columns={columns} dataSource={contacts} rowKey="id" />
+      <Table
+        columns={columns}
+        dataSource={contacts}
+        rowKey="id"
+        onRow={(record) => {
+          return {
+            onClick: () => {
+              router.push(`/contacts/${record.id}`);
+            },
+            style: { cursor: "pointer" }, // optional: visual cue
+          };
+        }}
+      />
 
       <Modal
         title="Create Contact"
