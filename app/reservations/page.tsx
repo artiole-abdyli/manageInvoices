@@ -180,11 +180,17 @@ export default function ReservationsPage() {
         <div>
           <Popconfirm
             title="Are you sure to delete this reservation?"
-            onConfirm={() => handleDelete(record.id)}
+            onConfirm={(e) => {
+              e?.stopPropagation(); // Prevents triggering onRow
+              handleDelete(record.id);
+            }}
             okText="Yes"
             cancelText="No"
           >
-            <DeleteOutlined style={{ color: "red", cursor: "pointer" }} />
+            <DeleteOutlined
+              onClick={(e) => e.stopPropagation()} // Prevents row click when icon is clicked
+              style={{ color: "red", cursor: "pointer" }}
+            />
           </Popconfirm>
         </div>
       ),
