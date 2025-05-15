@@ -86,7 +86,6 @@ export default function ProductsPage() {
       title: "Action",
       render: (_: any, record: Product) => (
         <div>
-          <EditOutlined style={{ cursor: "pointer", marginRight: "10px" }} />
           <Popconfirm
             title="Are you sure to delete this product?"
             onConfirm={() => handleDelete(record.id)}

@@ -54,8 +54,6 @@ export default function ContactsPage() {
       title: "Action",
       render: (_: any, record: Contact) => (
         <div style={{ display: "flex", gap: "10px" }}>
-          <EditOutlined style={{ cursor: "pointer" }} />
-
           <Popconfirm
             title="Are you sure to delete this contact?"
             onConfirm={(e) => {
