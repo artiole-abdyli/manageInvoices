@@ -21,7 +21,13 @@ const { Sider, Header, Content } = Layout;
 const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
+  const handleLogout = () => {
+    // Clear session/token/cookies
+    localStorage.removeItem("token"); // Or however you're managing auth
 
+    // Redirect to login
+    router.push("/login");
+  };
   return (
     <ConfigProvider
       theme={{
@@ -35,6 +41,7 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
           onCollapse={setCollapsed}
           width={220}
           breakpoint="lg"
+          style={{ display: "flex", flexDirection: "column" }} // key for separation
         >
           <div
             style={{
@@ -51,13 +58,12 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
             }}
           ></div>
 
+          {/* TOP MENU */}
           <Menu
             theme="dark"
             mode="inline"
             defaultSelectedKeys={["dashboard"]}
-            onClick={({ key }) => {
-              router.push(`/${key}`);
-            }}
+            onClick={({ key }) => router.push(`/${key}`)}
             items={[
               {
                 key: "contacts",
@@ -69,7 +75,6 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
                 icon: <SkinOutlined />,
                 label: "Dresses",
               },
-
               {
                 key: "reservations",
                 icon: <CalendarOutlined />,
@@ -81,8 +86,28 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
                 label: "Invoices",
               },
             ]}
+            style={{ flex: 1 }} // This ensures the top menu grows to fill space
+          />
+
+          {/* BOTTOM MENU (Logout) */}
+          <Menu
+            theme="dark"
+            mode="inline"
+            selectable={false} // prevent it from being highlighted
+            onClick={({ key }) => {
+              if (key === "logout") handleLogout();
+            }}
+            style={{ marginTop: "640px" }}
+            items={[
+              {
+                key: "logout",
+                icon: <SettingOutlined />,
+                label: "Logout",
+              },
+            ]}
           />
         </Sider>
+
         <Layout style={{ padding: "0 20px" }}>
           <Content>{children}</Content>
         </Layout>
