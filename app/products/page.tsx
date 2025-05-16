@@ -1,5 +1,14 @@
 "use client";
-import { Button, Form, Input, Modal, Popconfirm, Table, message } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  Popconfirm,
+  Table,
+  Upload,
+  message,
+} from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useEffect, useState } from "react";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
@@ -73,6 +82,19 @@ export default function ProductsPage() {
   }, [newProductCreated, productDeleted]);
   const columns = [
     {
+      title: "Image",
+      dataIndex: "image_full_url", // updated field
+      render: (url: string) =>
+        url ? (
+          <img
+            src={url}
+            style={{ width: 30, height: 30, objectFit: "cover" }}
+          />
+        ) : (
+          "No image"
+        ),
+    },
+    {
       title: "Name",
       dataIndex: "name",
       name: "product name",
@@ -105,20 +127,29 @@ export default function ProductsPage() {
       ),
     },
   ];
-  const handleCreate = async (values: Omit<Product, "id">) => {
+  const handleCreate = async (values: any) => {
     try {
+      const formData = new FormData();
+
+      // Append text fields
+      formData.append("name", values.name);
+      formData.append("price", values.price);
+      formData.append("description", values.description || "");
+
+      // Append image file
+      if (values.image && values.image[0]) {
+        formData.append("image", values.image[0].originFileObj);
+      }
+
       const response = await fetch("http://127.0.0.1:8000/api/products", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(values),
+        body: formData,
       });
-      setNewProductCreated(true);
+
       if (!response.ok) throw new Error("Failed to create product");
 
       message.success("Product created successfully!");
+      setNewProductCreated(true);
       handleCloseModal();
     } catch (error) {
       console.error(error);
@@ -171,6 +202,21 @@ export default function ProductsPage() {
         >
           <Form.Item name="name" label="Name">
             <Input name="name" />
+          </Form.Item>
+          <Form.Item
+            name="image"
+            label="Product Image"
+            valuePropName="file"
+            getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+          >
+            <Upload
+              listType="picture-card"
+              beforeUpload={() => false} // prevents auto upload
+              accept="image/*"
+              maxCount={1}
+            >
+              + Upload
+            </Upload>
           </Form.Item>
           <Form.Item name="price" label="Price">
             <Input name="price" />
