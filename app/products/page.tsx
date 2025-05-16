@@ -12,12 +12,13 @@ import {
 import { useForm } from "antd/es/form/Form";
 import { useEffect, useState } from "react";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-
+import { useRouter } from "next/navigation";
 type Product = {
   id?: number;
   name?: any;
   price?: number;
   deposit?: number;
+  status?: string;
   description?: any;
   number_of_reservation?: any;
 };
@@ -34,6 +35,8 @@ export default function ProductsPage() {
       .toLowerCase()
       .includes(searchTerm.toLocaleLowerCase())
   );
+  const router = useRouter();
+
   const fetchProducts = async () => {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/products", {
@@ -77,6 +80,32 @@ export default function ProductsPage() {
       message.error("Failed to delete product");
     }
   };
+  const handleStatusToggle = async (product: Product) => {
+    const newStatus =
+      product?.status === "available" ? "out of stock" : "available";
+
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/products/${product.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({ ...product, status: newStatus }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to update status");
+
+      message.success("Status updated successfully");
+      fetchProducts(); // Refresh product list
+    } catch (error) {
+      console.error(error);
+      message.error("Failed to update status");
+    }
+  };
   useEffect(() => {
     fetchProducts();
   }, [newProductCreated, productDeleted]);
@@ -106,9 +135,21 @@ export default function ProductsPage() {
     },
     { title: "Description", dataIndex: "description", name: "description" },
     {
-      title: "Number of reservation",
-      dataIndex: "number_of_reservation",
-      name: "number of reservation",
+      title: "Status",
+      dataIndex: "status",
+      name: "status",
+      // render: (_: any, record: Product) => (
+      //   <Button
+      //     type="link"
+      //     onClick={() => handleStatusToggle(record)}
+      //     style={{
+      //       color: record.status === "available" ? "green" : "red",
+      //       padding: 0,
+      //     }}
+      //   >
+      //     {record.status === "available" ? "Available" : "Out of stock"}
+      //   </Button>
+      // ),
     },
     {
       name: "action",
@@ -187,7 +228,18 @@ export default function ProductsPage() {
         onChange={(e) => setSearchTerm(e.target.value)}
         style={{ width: 300, marginBottom: 20 }}
       />
-      <Table columns={columns} dataSource={filteredProducts}></Table>
+      <Table
+        columns={columns}
+        dataSource={filteredProducts}
+        onRow={(record) => {
+          return {
+            onClick: () => {
+              router.push(`/products/${record.id}`);
+            },
+            style: { cursor: "pointer" },
+          };
+        }}
+      ></Table>
       <Modal
         open={isModalOpen}
         onCancel={handleCloseModal}

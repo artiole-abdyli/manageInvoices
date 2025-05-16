@@ -31,7 +31,8 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <ConfigProvider
       theme={{
-        token: { colorPrimary: "#1677ff" },
+        token: { colorPrimary: "#1677ff", fontFamily: "Inter, sans-serif" },
+
         components: { Layout: { headerBg: "#fff" } },
       }}
     >
