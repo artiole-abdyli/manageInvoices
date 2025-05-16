@@ -8,6 +8,7 @@ type Product = {
   id?: number;
   name?: any;
   price?: number;
+  deposit?: number;
   description?: any;
   number_of_reservation?: any;
 };
@@ -18,6 +19,12 @@ export default function ProductsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newProductCreated, setNewProductCreated] = useState(false);
   const [productDeleted, setProductDeleted] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const filteredProducts = products?.filter((product) =>
+    `${product?.name} ${product?.price} ${product?.deposit} ${product?.description}`
+      .toLowerCase()
+      .includes(searchTerm.toLocaleLowerCase())
+  );
   const fetchProducts = async () => {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/products", {
@@ -143,7 +150,13 @@ export default function ProductsPage() {
           Create +
         </Button>
       </div>{" "}
-      <Table columns={columns} dataSource={products}></Table>
+      <Input.Search
+        placeholder="Search products"
+        allowClear
+        onChange={(e) => setSearchTerm(e.target.value)}
+        style={{ width: 300, marginBottom: 20 }}
+      />
+      <Table columns={columns} dataSource={filteredProducts}></Table>
       <Modal
         open={isModalOpen}
         onCancel={handleCloseModal}

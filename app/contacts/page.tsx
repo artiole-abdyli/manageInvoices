@@ -22,7 +22,7 @@ export default function ContactsPage() {
   const [form] = useForm();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
-  const filteredContacts = contacts.filter((contact) =>
+  const filteredContacts = contacts?.filter((contact) =>
     `${contact?.firstname} ${contact?.lastname} ${contact?.phone_number}`
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
