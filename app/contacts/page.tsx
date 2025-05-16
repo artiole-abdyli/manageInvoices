@@ -21,7 +21,12 @@ export default function ContactsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = useForm();
   const router = useRouter();
-
+  const [searchTerm, setSearchTerm] = useState("");
+  const filteredContacts = contacts.filter((contact) =>
+    `${contact?.firstname} ${contact?.lastname} ${contact?.phone_number}`
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  );
   const handleDelete = async (id?: number) => {
     if (!id) return;
 
@@ -149,10 +154,16 @@ export default function ContactsPage() {
           Create +
         </Button>
       </div>
+      <Input.Search
+        placeholder="Search contacts"
+        allowClear
+        onChange={(e) => setSearchTerm(e.target.value)}
+        style={{ width: 300, marginBottom: 20 }}
+      />
 
       <Table
         columns={columns}
-        dataSource={contacts}
+        dataSource={filteredContacts}
         rowKey="id"
         onRow={(record) => {
           return {
