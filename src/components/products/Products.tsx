@@ -1,7 +1,7 @@
 "use client";
-import { Table, Typography } from "antd";
+import { Button, Table, Typography } from "antd";
 import { useEffect, useState } from "react";
-
+import { EditOutlined } from "@ant-design/icons";
 type Props = {
   id?: any;
 };
@@ -106,15 +106,28 @@ export default function ProductShowPage({ id }: Props) {
           borderRadius: "8px",
         }}
       >
-        <Typography
+        <div
           style={{
-            fontSize: "25px",
-            fontWeight: "400",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
             marginBottom: "30px",
           }}
         >
-          {product?.name}
-        </Typography>
+          <Typography
+            style={{
+              fontSize: "25px",
+              fontWeight: "400",
+              margin: 0,
+            }}
+          >
+            {product?.name}
+          </Typography>
+
+          <Button type="primary" icon={<EditOutlined />}>
+            Edit
+          </Button>
+        </div>
 
         <div
           style={{
