@@ -1,5 +1,5 @@
 "use client";
-import { Typography } from "antd";
+import { Table, Typography } from "antd";
 import { useEffect, useState } from "react";
 
 type Props = {
@@ -35,13 +35,19 @@ export default function ProductShowPage({ id }: Props) {
 
       if (!response.ok) throw new Error("Failed to fetch reservation");
       const rawData = await response.json();
-      console.log("rawData:", rawData);
-      setReservation(rawData.data);
+
+      const reservationData = Array.isArray(rawData.data)
+        ? rawData.data
+        : rawData.data
+        ? [rawData.data]
+        : [];
+
+      setReservation(reservationData);
     } catch (error) {
       console.error(error);
+      setReservation([]);
     }
   };
-  console.log("reservations:", reservation);
 
   useEffect(() => {
     if (id) {
@@ -49,6 +55,38 @@ export default function ProductShowPage({ id }: Props) {
       fetchProductReservation(id);
     }
   }, [id]);
+  const columns = [
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+    },
+    {
+      title: "Returning Date",
+      dataIndex: "returning_date",
+      key: "returning_date",
+    },
+    {
+      title: "Extra Requirement",
+      dataIndex: "extra_requirement",
+      key: "extra_requirement",
+    },
+    {
+      title: "Price (€)",
+      dataIndex: "price",
+      key: "price",
+    },
+    {
+      title: "Deposit (€)",
+      dataIndex: "deposit",
+      key: "deposit",
+    },
+    {
+      title: "Remaining Payment (€)",
+      dataIndex: "remaining_payment",
+      key: "remaining_payment",
+    },
+  ];
 
   return (
     <div
@@ -59,7 +97,6 @@ export default function ProductShowPage({ id }: Props) {
         padding: "40px",
       }}
     >
-      {/* Left Box - Product Info */}
       <div
         style={{
           flex: "0 0 40%",
@@ -114,7 +151,6 @@ export default function ProductShowPage({ id }: Props) {
         </Typography>
       </div>
 
-      {/* Right Box - Reservations */}
       <div
         style={{
           flex: "1",
@@ -129,27 +165,7 @@ export default function ProductShowPage({ id }: Props) {
         >
           Reservations for this product
         </Typography>
-
-        {reservation ? (
-          <div style={{ marginTop: "16px" }}>
-            <Typography>Date: {reservation.date}</Typography>
-            <Typography>
-              Returning Date: {reservation.returning_date}
-            </Typography>
-            <Typography>
-              Extra Requirement: {reservation.extra_requirement}
-            </Typography>
-            <Typography>Price: €{reservation.price}</Typography>
-            <Typography>Deposit: €{reservation.deposit}</Typography>
-            <Typography>
-              Remaining Payment: €{reservation.remaining_payment}
-            </Typography>
-          </div>
-        ) : (
-          <Typography style={{ marginTop: "16px" }}>
-            No reservations found.
-          </Typography>
-        )}
+        <Table dataSource={reservation} columns={columns}></Table>
       </div>
     </div>
   );
