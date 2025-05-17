@@ -211,12 +211,10 @@ export default function ReservationsPage() {
         body: JSON.stringify(values),
       });
 
-      // If there's a failure, parse and show it
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Server returned error:", errorData);
 
-        // Optional: show first validation message in UI
         const firstError = errorData?.errors
           ? Object.values(errorData.errors)[0]
           : "Unknown error";
@@ -265,7 +263,7 @@ export default function ReservationsPage() {
             onClick: () => {
               router.push(`/reservations/${record.id}`);
             },
-            style: { cursor: "pointer" }, // optional: visual cue
+            style: { cursor: "pointer" },
           };
         }}
       ></Table>

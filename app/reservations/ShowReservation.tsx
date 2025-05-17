@@ -1,8 +1,21 @@
 "use client";
 
-import { Card, Descriptions, Typography, Space, Button } from "antd";
+import {
+  Card,
+  Descriptions,
+  Typography,
+  Space,
+  Button,
+  Modal,
+  Form,
+  DatePicker,
+  InputNumber,
+  Input,
+  message,
+} from "antd";
 import { useEffect, useState } from "react";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
 
 type Props = {
   id: string;
@@ -18,12 +31,15 @@ type Reservation = {
   product?: any;
   extra_requirement?: string;
   remaining_payment?: number;
-  contact_id?: number; // You can replace this with full contact info
+  contact_id?: number;
   product_id?: number;
 };
 
 export default function ShowReservation({ id }: Props) {
   const [reservation, setReservation] = useState<Reservation>();
+  const [form] = Form.useForm();
+  const [openReservationEditModal, setOpenReservationEditModal] =
+    useState(false);
 
   const fetchReservationDetails = async (id: string) => {
     try {
@@ -36,17 +52,57 @@ export default function ShowReservation({ id }: Props) {
 
       if (!response.ok) throw new Error("Failed to fetch reservation");
       const rawData = await response.json();
-      console.log("rawDataa:", rawData);
-
       setReservation(rawData.data);
     } catch (error) {
       console.error(error);
     }
   };
 
+  const handleUpdateReservation = async (values: any) => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/reservations/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            ...values,
+            date: values.date?.format("YYYY-MM-DD"),
+            returning_date: values.returning_date?.format("YYYY-MM-DD"),
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to update reservation");
+
+      const updated = await response.json();
+      setReservation(updated.data);
+      setOpenReservationEditModal(false);
+      message.success("Reservation updated successfully");
+    } catch (error) {
+      console.error(error);
+      message.error("Failed to update reservation");
+    }
+  };
+
   useEffect(() => {
     fetchReservationDetails(id);
   }, [id]);
+
+  useEffect(() => {
+    if (openReservationEditModal && reservation) {
+      form.setFieldsValue({
+        ...reservation,
+        date: reservation.date ? dayjs(reservation.date) : null,
+        returning_date: reservation.returning_date
+          ? dayjs(reservation.returning_date)
+          : null,
+      });
+    }
+  }, [openReservationEditModal, reservation, form]);
 
   return (
     <div style={{ padding: "15px" }}>
@@ -62,7 +118,11 @@ export default function ShowReservation({ id }: Props) {
         <Typography.Title level={2}>Reservation #{id}</Typography.Title>
 
         <Space>
-          <Button type="primary" icon={<EditOutlined />}>
+          <Button
+            type="primary"
+            icon={<EditOutlined />}
+            onClick={() => setOpenReservationEditModal(true)}
+          >
             Edit
           </Button>
         </Space>
@@ -99,6 +159,55 @@ export default function ShowReservation({ id }: Props) {
           </Descriptions.Item>
         </Descriptions>
       </Card>
+
+      <Modal
+        title="Edit Reservation"
+        open={openReservationEditModal}
+        onOk={() => form.submit()}
+        onCancel={() => setOpenReservationEditModal(false)}
+        okText="Save"
+      >
+        <Form form={form} layout="vertical" onFinish={handleUpdateReservation}>
+          <Form.Item name="date" label="Date of reservation">
+            <DatePicker style={{ width: "100%" }} />
+          </Form.Item>
+
+          <Form.Item name="returning_date" label="Returning date">
+            <DatePicker style={{ width: "100%" }} />
+          </Form.Item>
+
+          <Form.Item name="price" label="Total price">
+            <InputNumber
+              name="price"
+              style={{ width: "100%" }}
+              placeholder="€"
+            />
+          </Form.Item>
+
+          <Form.Item name="deposit" label="Deposit">
+            <InputNumber
+              name="deposit"
+              style={{ width: "100%" }}
+              placeholder="€"
+            />
+          </Form.Item>
+
+          <Form.Item name="remaining_payment" label="Remaining payment">
+            <InputNumber
+              name="remaining_payment"
+              style={{ width: "100%" }}
+              placeholder="€"
+            />
+          </Form.Item>
+
+          <Form.Item name="extra_requirement" label="Extra requirement">
+            <Input.TextArea
+              rows={4}
+              placeholder="Enter extra requirements here..."
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 }
