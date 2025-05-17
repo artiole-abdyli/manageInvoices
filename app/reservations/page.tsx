@@ -12,6 +12,7 @@ import {
   Col,
   message,
   Popconfirm,
+  Tag,
 } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 
@@ -52,6 +53,8 @@ export default function ReservationsPage() {
   const [deletedReservation, setDeletedReservation] = useState(false);
   const [form] = useForm();
   const router = useRouter();
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+
   const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null]>([
     null,
     null,
@@ -174,6 +177,19 @@ export default function ReservationsPage() {
       title: "Remaining payment",
     },
     {
+      title: "Status",
+      key: "status",
+      render: (_: any, record: Reservation) => {
+        if (
+          record.returning_date &&
+          dayjs(record.returning_date).isBefore(dayjs(), "day")
+        ) {
+          return <Tag color="red">Overdue</Tag>;
+        }
+        return <Tag color="green">On Time</Tag>;
+      },
+    },
+    {
       name: "extra_requirement",
       title: "Extra requirement",
       dataIndex: "extra_requirement",
@@ -267,18 +283,41 @@ export default function ReservationsPage() {
           }
           allowClear
         />
+        <Select
+          style={{ width: 200, marginLeft: 16 }}
+          placeholder="Filter by Status"
+          onChange={(value) => setStatusFilter(value)}
+          allowClear
+          options={[
+            { label: "Overdue", value: "overdue" },
+            { label: "On Time", value: "on_time" },
+          ]}
+        />
       </div>
+
       <Table
         columns={columns}
         dataSource={reservations.filter((res) => {
-          if (!dateRange[0] || !dateRange[1]) return true;
+          // Filter by date range
+          if (dateRange?.[0] && dateRange?.[1]) {
+            const reservationDate = dayjs(res.date);
+            if (
+              !reservationDate?.isAfter(dateRange?.[0].startOf("day")) ||
+              !reservationDate?.isBefore(dateRange?.[1].endOf("day"))
+            ) {
+              return false;
+            }
+          }
 
-          const reservationDate = dayjs(res.date); // assuming ISO format date from backend
+          // Filter by status
+          const isOverdue =
+            res.returning_date &&
+            dayjs(res.returning_date).isBefore(dayjs(), "day");
 
-          return (
-            reservationDate.isAfter(dateRange[0].startOf("day")) &&
-            reservationDate.isBefore(dateRange[1].endOf("day"))
-          );
+          if (statusFilter === "overdue" && !isOverdue) return false;
+          if (statusFilter === "on_time" && isOverdue) return false;
+
+          return true;
         })}
         rowKey="id"
         onRow={(record) => ({
