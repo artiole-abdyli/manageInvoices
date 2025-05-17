@@ -13,10 +13,11 @@ import {
   message,
   Popconfirm,
 } from "antd";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import dayjs, { Dayjs } from "dayjs";
+
+import { DeleteOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useForm } from "antd/es/form/Form";
-import { ExceptionMap } from "antd/es/result";
 import { useRouter } from "next/navigation";
 type Reservation = {
   id?: number | undefined;
@@ -51,6 +52,10 @@ export default function ReservationsPage() {
   const [deletedReservation, setDeletedReservation] = useState(false);
   const [form] = useForm();
   const router = useRouter();
+  const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null]>([
+    null,
+    null,
+  ]);
 
   const handleOpen = () => {
     setIsModalOpen(true);
@@ -255,18 +260,35 @@ export default function ReservationsPage() {
           Create +
         </Button>
       </div>
+      <div style={{ marginBottom: 16 }}>
+        <DatePicker.RangePicker
+          onChange={(dates) =>
+            setDateRange(dates as [Dayjs | null, Dayjs | null])
+          }
+          allowClear
+        />
+      </div>
       <Table
         columns={columns}
-        dataSource={reservations}
-        onRow={(record) => {
-          return {
-            onClick: () => {
-              router.push(`/reservations/${record.id}`);
-            },
-            style: { cursor: "pointer" },
-          };
-        }}
-      ></Table>
+        dataSource={reservations.filter((res) => {
+          if (!dateRange[0] || !dateRange[1]) return true;
+
+          const reservationDate = dayjs(res.date); // assuming ISO format date from backend
+
+          return (
+            reservationDate.isAfter(dateRange[0].startOf("day")) &&
+            reservationDate.isBefore(dateRange[1].endOf("day"))
+          );
+        })}
+        rowKey="id"
+        onRow={(record) => ({
+          onClick: () => {
+            router.push(`/reservations/${record.id}`);
+          },
+          style: { cursor: "pointer" },
+        })}
+      />
+
       <Modal
         open={isModalOpen}
         onCancel={handleClose}
