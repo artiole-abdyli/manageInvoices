@@ -1,6 +1,6 @@
 "use client";
 import { PropsWithChildren, useState } from "react";
-import { Layout, Menu, ConfigProvider } from "antd";
+import { Layout, Menu, ConfigProvider, Popconfirm } from "antd";
 import {
   HomeOutlined,
   MoneyCollectOutlined,
@@ -13,6 +13,7 @@ import {
   CalendarOutlined,
   OrderedListOutlined,
   ReconciliationOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import { url } from "inspector";
 import { useRouter } from "next/navigation";
@@ -22,10 +23,8 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
   const handleLogout = () => {
-    // Clear session/token/cookies
-    localStorage.removeItem("token"); // Or however you're managing auth
+    localStorage.removeItem("token");
 
-    // Redirect to login
     router.push("/login");
   };
   return (
@@ -42,7 +41,7 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
           onCollapse={setCollapsed}
           width={220}
           breakpoint="lg"
-          style={{ display: "flex", flexDirection: "column" }} // key for separation
+          style={{ display: "flex", flexDirection: "column" }}
         >
           <div
             style={{
@@ -59,7 +58,6 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
             }}
           ></div>
 
-          {/* TOP MENU */}
           <Menu
             theme="dark"
             mode="inline"
@@ -86,27 +84,48 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
                 icon: <ReconciliationOutlined />,
                 label: "Invoices",
               },
-            ]}
-            style={{ flex: 1 }} // This ensures the top menu grows to fill space
-          />
-
-          {/* BOTTOM MENU (Logout) */}
-          <Menu
-            theme="dark"
-            mode="inline"
-            selectable={false} // prevent it from being highlighted
-            onClick={({ key }) => {
-              if (key === "logout") handleLogout();
-            }}
-            style={{ marginTop: "640px" }}
-            items={[
               {
-                key: "logout",
-                icon: <SettingOutlined />,
-                label: "Logout",
+                key: "mailings",
+                icon: <MailOutlined />,
+                label: "Mailings",
               },
             ]}
+            style={{ flex: 1 }}
           />
+
+          <div style={{ marginTop: "auto", padding: "16px" }}>
+            <Popconfirm
+              title="Are you sure you want to logout?"
+              onConfirm={handleLogout}
+              okText="Yes"
+              cancelText="No"
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  color: "#fff",
+                  cursor: "pointer",
+                  padding: "10px 16px",
+                  borderRadius: "8px",
+                  marginTop: "550px",
+                  transition: "background 0.3s",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = "#1677ff";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background =
+                    "transparent";
+                }}
+              >
+                <LogoutOutlined
+                  style={{ marginRight: "10px", fontSize: "16px" }}
+                />
+                <span style={{ fontSize: "14px" }}>Logout</span>
+              </div>
+            </Popconfirm>
+          </div>
         </Sider>
 
         <Layout style={{ padding: "0 20px" }}>
