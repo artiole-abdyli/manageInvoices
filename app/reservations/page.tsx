@@ -16,7 +16,7 @@ import {
 } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, DownloadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useForm } from "antd/es/form/Form";
 import { useRouter } from "next/navigation";
@@ -257,6 +257,32 @@ export default function ReservationsPage() {
   useEffect(() => {
     fetchContactsOptions();
   }, []);
+  const handleDownloadPdf = async () => {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/reservations/download/pdf",
+        {
+          method: "GET",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to download PDF");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "reservations-list.pdf");
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+    } catch (error) {
+      console.error(error);
+      message.error("Failed to export PDF");
+    }
+  };
 
   return (
     <>
@@ -293,12 +319,22 @@ export default function ReservationsPage() {
             { label: "On Time", value: "on_time" },
           ]}
         />
+        <Button
+          style={{
+            marginLeft: "10px",
+            backgroundColor: "#001529",
+            color: "white",
+          }}
+          onClick={handleDownloadPdf}
+          icon={<DownloadOutlined />}
+        >
+          Export as pdf
+        </Button>
       </div>
 
       <Table
         columns={columns}
         dataSource={reservations.filter((res) => {
-          // Filter by date range
           if (dateRange?.[0] && dateRange?.[1]) {
             const reservationDate = dayjs(res.date);
             if (
@@ -309,7 +345,6 @@ export default function ReservationsPage() {
             }
           }
 
-          // Filter by status
           const isOverdue =
             res.returning_date &&
             dayjs(res.returning_date).isBefore(dayjs(), "day");
