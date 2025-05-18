@@ -3,8 +3,8 @@ import { Button, Form, Input, Modal, Table, message, Popconfirm } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useEffect, useState } from "react";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Router } from "next/router";
 import { useRouter } from "next/navigation";
+import { DownloadOutlined } from "@ant-design/icons";
 
 type Contact = {
   id?: number;
@@ -135,6 +135,32 @@ export default function ContactsPage() {
       message.error("Failed to create contact");
     }
   };
+  const handleDownloadPdf = async () => {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/contacts/download/pdf",
+        {
+          method: "GET",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to download PDF");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "contacts-list.pdf");
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+    } catch (error) {
+      console.error(error);
+      message.error("Failed to export PDF");
+    }
+  };
 
   return (
     <>
@@ -160,6 +186,17 @@ export default function ContactsPage() {
         onChange={(e) => setSearchTerm(e.target.value)}
         style={{ width: 300, marginBottom: 20 }}
       />
+      <Button
+        onClick={handleDownloadPdf}
+        icon={<DownloadOutlined />}
+        style={{
+          marginLeft: "10px",
+          backgroundColor: "#001529",
+          color: "white",
+        }}
+      >
+        Export PDF
+      </Button>
 
       <Table
         columns={columns}
@@ -170,7 +207,7 @@ export default function ContactsPage() {
             onClick: () => {
               router.push(`/contacts/${record.id}`);
             },
-            style: { cursor: "pointer" }, // optional: visual cue
+            style: { cursor: "pointer" },
           };
         }}
       />
