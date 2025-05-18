@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "antd/es/form/Form";
 import { useRouter } from "next/navigation";
 type Reservation = {
+  contact: any;
   id?: number | undefined;
   date?: any;
   returning_date?: any;
@@ -160,7 +161,15 @@ export default function ReservationsPage() {
       dataIndex: "returning_date",
       title: "Date of returning",
     },
-    { name: "contact_id", dataIndex: "contact_id", title: "Contact" },
+    {
+      title: "Contact",
+      key: "contact",
+      render: (_: any, record: Reservation) => {
+        const contact = record?.contact;
+        return contact ? `${contact.firstname} ${contact.lastname} ` : "-";
+      },
+    },
+
     {
       name: "price",
       dataIndex: "price",
