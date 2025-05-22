@@ -1,8 +1,21 @@
 "use client";
-import { Button, Form, Input, Modal, Table, message, Popconfirm } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  Table,
+  message,
+  Popconfirm,
+  Upload,
+} from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useEffect, useState } from "react";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ImportOutlined,
+} from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { DownloadOutlined } from "@ant-design/icons";
 
@@ -197,6 +210,41 @@ export default function ContactsPage() {
       >
         Export PDF
       </Button>
+      <Upload
+        name="file"
+        accept=".pdf,.xlsx,.xls"
+        showUploadList={false}
+        customRequest={async ({ file, onSuccess, onError }) => {
+          const formData = new FormData();
+          formData.append("file", file);
+
+          try {
+            const response = await fetch(
+              "http://127.0.0.1:8000/api/contacts/import",
+              {
+                method: "POST",
+                body: formData,
+              }
+            );
+
+            if (!response.ok) throw new Error("Failed to import contacts");
+
+            message.success("Contacts imported successfully!");
+            fetchContacts();
+            onSuccess?.(response);
+          } catch (err) {
+            console.error(err);
+            message.error("Failed to import contacts");
+          }
+        }}
+      >
+        <Button
+          icon={<ImportOutlined />}
+          style={{ marginLeft: 10, backgroundColor: "#001529", color: "white" }}
+        >
+          Import PDF / Excel
+        </Button>
+      </Upload>
 
       <Table
         columns={columns}
