@@ -14,6 +14,7 @@ import { useForm } from "antd/es/form/Form";
 import { useEffect, useState } from "react";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
+import TextArea from "antd/es/input/TextArea";
 type Product = {
   id?: number;
   name?: any;
@@ -279,7 +280,7 @@ export default function ProductsPage() {
             <InputNumber name="price" />
           </Form.Item>
           <Form.Item name="description" label="Short description">
-            <Input name="description" />
+            <TextArea name="description" />
           </Form.Item>
         </Form>
       </Modal>

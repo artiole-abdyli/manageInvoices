@@ -1,15 +1,35 @@
 "use client";
-import { Button, Table, Typography } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Table,
+  Typography,
+  Upload,
+} from "antd";
 import { useEffect, useState } from "react";
 import { EditOutlined } from "@ant-design/icons";
+import TextArea from "antd/es/input/TextArea";
 type Props = {
   id?: any;
+  name?: any;
 };
 
 export default function ProductShowPage({ id }: Props) {
   const [product, setProduct] = useState<any>();
   const [reservation, setReservation] = useState<any>();
+  const [openProductEditModal, setOpenProductEditModal] =
+    useState<boolean>(false);
+  const [form] = Form.useForm();
 
+  const handleOpenProductEditModal = () => {
+    setOpenProductEditModal(true);
+  };
+  const handleCloseProductEditModal = () => {
+    setOpenProductEditModal(false);
+  };
   const fetchProductDetail = async (id: string) => {
     try {
       const response = await fetch(`http://127.0.0.1:8000/api/products/${id}`, {
@@ -48,7 +68,16 @@ export default function ProductShowPage({ id }: Props) {
       setReservation([]);
     }
   };
-
+  useEffect(() => {
+    if (openProductEditModal) {
+      form.setFieldsValue({
+        name: product?.name ?? "",
+        price: product?.price,
+        description: product?.description,
+      });
+    }
+  }, [openProductEditModal, product, form]);
+  console.log("Product:", product);
   useEffect(() => {
     if (id) {
       fetchProductDetail(id);
@@ -87,6 +116,34 @@ export default function ProductShowPage({ id }: Props) {
       key: "remaining_payment",
     },
   ];
+  const handleUpdateProduct = async (values: any) => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/products/update/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            ...values,
+            date: values.date?.format("YYYY-MM-DD"),
+            returning_date: values.returning_date?.format("YYYY-MM-DD"),
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to update product");
+
+      const result = await response.json();
+      console.log("Updated:", result);
+      fetchProductDetail(id); // refresh the product info
+      setOpenProductEditModal(false); // close modal
+    } catch (error) {
+      console.error("Update failed", error);
+    }
+  };
 
   return (
     <div
@@ -124,7 +181,11 @@ export default function ProductShowPage({ id }: Props) {
             {product?.name}
           </Typography>
 
-          <Button type="primary" icon={<EditOutlined />}>
+          <Button
+            type="primary"
+            icon={<EditOutlined />}
+            onClick={handleOpenProductEditModal}
+          >
             Edit
           </Button>
         </div>
@@ -179,6 +240,35 @@ export default function ProductShowPage({ id }: Props) {
           Reservations for this product
         </Typography>
         <Table dataSource={reservation} columns={columns}></Table>
+        <Modal
+          title="Edit product"
+          open={openProductEditModal}
+          onCancel={handleCloseProductEditModal}
+          onOk={() => form.submit()} // This triggers form submit
+          width={600}
+          bodyStyle={{ paddingTop: "30px", minHeight: "400px" }} // Set height here
+        >
+          <Form form={form} onFinish={handleUpdateProduct}>
+            <Form.Item
+              name="name"
+              label="Name"
+              rules={[{ required: true, message: "Please enter name" }]}
+            >
+              <Input required style={{ marginBottom: "20px" }} />
+            </Form.Item>
+
+            <Form.Item name="price" label="Price">
+              <InputNumber name="price" style={{ marginBottom: "20px" }} />
+            </Form.Item>
+            <Form.Item
+              name="description"
+              label="Short description"
+              style={{ marginBottom: "20px" }}
+            >
+              <TextArea name="description" />
+            </Form.Item>
+          </Form>
+        </Modal>
       </div>
     </div>
   );
