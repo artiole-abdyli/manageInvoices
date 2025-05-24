@@ -3,6 +3,7 @@ import {
   Button,
   Form,
   Input,
+  InputNumber,
   Modal,
   Popconfirm,
   Table,
@@ -252,8 +253,12 @@ export default function ProductsPage() {
           onFinish={handleCreate}
           style={{ paddingTop: "20px", paddingBottom: "20px" }}
         >
-          <Form.Item name="name" label="Name">
-            <Input name="name" />
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[{ required: true, message: "Please enter name" }]}
+          >
+            <Input name="name" required />
           </Form.Item>
           <Form.Item
             name="image"
@@ -271,7 +276,7 @@ export default function ProductsPage() {
             </Upload>
           </Form.Item>
           <Form.Item name="price" label="Price">
-            <Input name="price" />
+            <InputNumber name="price" />
           </Form.Item>
           <Form.Item name="description" label="Short description">
             <Input name="description" />

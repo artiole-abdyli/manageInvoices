@@ -17,6 +17,7 @@ import {
 } from "@ant-design/icons";
 import { url } from "inspector";
 import { useRouter } from "next/navigation";
+import { ClockCircleOutlined } from "@ant-design/icons";
 
 const { Sider, Header, Content } = Layout;
 const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
@@ -85,9 +86,9 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
                 label: "Invoices",
               },
               {
-                key: "mailings",
-                icon: <MailOutlined />,
-                label: "Mailings",
+                key: "reminders",
+                icon: <ClockCircleOutlined />,
+                label: "Reminders",
               },
             ]}
             style={{ flex: 1 }}
