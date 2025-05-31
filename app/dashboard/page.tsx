@@ -26,6 +26,7 @@ import {
   ScheduleOutlined,
   ContactsOutlined,
 } from "@ant-design/icons";
+import { useRouter } from "next/navigation";
 
 const { Header, Sider, Content } = Layout;
 const { Title, Text } = Typography;
@@ -60,6 +61,8 @@ export default function DressesDashboard() {
       status: "Out for Cleaning",
     },
   ];
+  const router = useRouter();
+
   const fetchProductsNumber = async () => {
     try {
       const response = await fetch(
@@ -151,7 +154,11 @@ export default function DressesDashboard() {
           {/* Stats Cards */}
           <Row gutter={16} style={{ marginBottom: 24 }}>
             <Col span={6}>
-              <Card>
+              <Card
+                onClick={() => router.push("/products")}
+                hoverable
+                style={{ cursor: "pointer" }}
+              >
                 <ShoppingOutlined
                   style={{
                     fontSize: 28,
@@ -159,7 +166,6 @@ export default function DressesDashboard() {
                     marginRight: "10px",
                   }}
                 />
-
                 <Text>Total Dresses</Text>
                 <Title level={3} style={{ marginLeft: "40px" }}>
                   {numberOfProducts}
@@ -167,7 +173,11 @@ export default function DressesDashboard() {
               </Card>
             </Col>
             <Col span={6}>
-              <Card>
+              <Card
+                onClick={() => router.push("/reservations")}
+                hoverable
+                style={{ cursor: "pointer" }}
+              >
                 <ScheduleOutlined
                   style={{
                     fontSize: 28,
@@ -183,7 +193,11 @@ export default function DressesDashboard() {
               </Card>
             </Col>
             <Col span={6}>
-              <Card>
+              <Card
+                onClick={() => router.push("/contacts")}
+                hoverable
+                style={{ cursor: "pointer" }}
+              >
                 <ContactsOutlined
                   style={{
                     fontSize: 28,
