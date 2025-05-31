@@ -14,6 +14,7 @@ import {
   OrderedListOutlined,
   ReconciliationOutlined,
   LogoutOutlined,
+  DashboardOutlined,
 } from "@ant-design/icons";
 import { url } from "inspector";
 import { useRouter } from "next/navigation";
@@ -66,6 +67,11 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
             onClick={({ key }) => router.push(`/${key}`)}
             items={[
               {
+                key: "dashboard",
+                icon: <DashboardOutlined />,
+                label: "Dashboard",
+              },
+              {
                 key: "contacts",
                 icon: <UserOutlined />,
                 label: "Contacts",
@@ -84,11 +90,6 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
                 key: "invoices",
                 icon: <ReconciliationOutlined />,
                 label: "Invoices",
-              },
-              {
-                key: "reminders",
-                icon: <ClockCircleOutlined />,
-                label: "Reminders",
               },
             ]}
             style={{ flex: 1 }}
