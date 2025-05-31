@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Layout,
   Menu,
@@ -19,17 +19,21 @@ import {
   DashboardOutlined,
   ShoppingOutlined,
   CalendarOutlined,
-  ContactsOutlined,
   BarChartOutlined,
   SettingOutlined,
   SearchOutlined,
   UserOutlined,
+  ScheduleOutlined,
+  ContactsOutlined,
 } from "@ant-design/icons";
 
 const { Header, Sider, Content } = Layout;
 const { Title, Text } = Typography;
 
 export default function DressesDashboard() {
+  const [numberOfProducts, setNumberOfProducts] = useState<any>();
+  const [numberOfReservations, setNumberOfReservations] = useState<any>();
+  const [numberOfContacts, setNumberOfContacts] = useState<any>();
   const dressData = [
     {
       key: "1",
@@ -56,6 +60,63 @@ export default function DressesDashboard() {
       status: "Out for Cleaning",
     },
   ];
+  const fetchProductsNumber = async () => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/number-of-products`,
+        {
+          headers: { Accept: "application/json" },
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to fetch contact");
+      const rawData = await response.json();
+      setNumberOfProducts(rawData?.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const fetchReservationsNumber = async () => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/reservations-number`,
+        {
+          headers: { Accept: "application/json" },
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to fetch contact");
+      const rawData = await response.json();
+      setNumberOfReservations(rawData?.numberOfReservations);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const fetchContactsNumber = async () => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/contacts-number`,
+        {
+          headers: { Accept: "application/json" },
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to fetch contact");
+      const rawData = await response.json();
+      setNumberOfContacts(rawData?.contactsNumber);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    fetchProductsNumber();
+  }, []);
+  useEffect(() => {
+    fetchReservationsNumber();
+  });
+  useEffect(() => {
+    fetchContactsNumber();
+  });
 
   const dressColumns = [
     {
@@ -81,7 +142,6 @@ export default function DressesDashboard() {
       render: () => <Button type="link">Edit</Button>,
     },
   ];
-
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Layout>
@@ -92,28 +152,59 @@ export default function DressesDashboard() {
           <Row gutter={16} style={{ marginBottom: 24 }}>
             <Col span={6}>
               <Card>
+                <ShoppingOutlined
+                  style={{
+                    fontSize: 28,
+                    color: "#1890ff",
+                    marginRight: "10px",
+                  }}
+                />
+
                 <Text>Total Dresses</Text>
-                <Title level={3}>120</Title>
+                <Title level={3} style={{ marginLeft: "40px" }}>
+                  {numberOfProducts}
+                </Title>
               </Card>
             </Col>
             <Col span={6}>
               <Card>
+                <ScheduleOutlined
+                  style={{
+                    fontSize: 28,
+                    color: "#1890ff",
+                    marginRight: "10px",
+                  }}
+                />
+
                 <Text>Active Reservations</Text>
-                <Title level={3}>8</Title>
+                <Title level={3} style={{ marginLeft: "40px" }}>
+                  {numberOfReservations}
+                </Title>
               </Card>
             </Col>
             <Col span={6}>
               <Card>
-                <Text>Upcoming Reservations</Text>
-                <Title level={3}>5</Title>
+                <ContactsOutlined
+                  style={{
+                    fontSize: 28,
+                    color: "#1890ff",
+                    marginRight: "10px",
+                  }}
+                />
+
+                <Text>Contacts</Text>
+                <Title level={3} style={{ marginLeft: "40px" }}>
+                  {numberOfContacts}
+                </Title>
               </Card>
             </Col>
-            <Col span={6}>
+
+            {/* <Col span={6}>
               <Card>
                 <Text>Contacts</Text>
                 <Title level={3}>1,540</Title>
               </Card>
-            </Col>
+            </Col> */}
           </Row>
 
           <Row gutter={24}>
