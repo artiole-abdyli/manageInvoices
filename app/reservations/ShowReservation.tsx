@@ -12,6 +12,7 @@ import {
   InputNumber,
   Input,
   message,
+  Select,
 } from "antd";
 import { useEffect, useState } from "react";
 import { EditOutlined } from "@ant-design/icons";
@@ -33,6 +34,7 @@ type Reservation = {
   remaining_payment?: number;
   contact_id?: number;
   product_id?: number;
+  status?: any;
 };
 
 export default function ShowReservation({ id }: Props) {
@@ -133,6 +135,9 @@ export default function ShowReservation({ id }: Props) {
         style={{ marginTop: 24, width: "900px" }}
       >
         <Descriptions bordered column={1}>
+          <Descriptions.Item label="Status">
+            {reservation?.status}
+          </Descriptions.Item>
           <Descriptions.Item label="Start Date">
             {reservation?.date}
           </Descriptions.Item>
@@ -154,6 +159,7 @@ export default function ShowReservation({ id }: Props) {
           <Descriptions.Item label="Remaining Payment">
             €{reservation?.remaining_payment}
           </Descriptions.Item>
+
           <Descriptions.Item label="Extra Requirement">
             {reservation?.extra_requirement || "None"}
           </Descriptions.Item>
@@ -190,6 +196,12 @@ export default function ShowReservation({ id }: Props) {
               style={{ width: "100%" }}
               placeholder="€"
             />
+          </Form.Item>
+          <Form.Item name="status" label="Status">
+            <Select placeholder="Select status">
+              <Select.Option value="on time">On Time</Select.Option>
+              <Select.Option value="overdue">Overdue</Select.Option>
+            </Select>
           </Form.Item>
 
           <Form.Item name="remaining_payment" label="Remaining payment">

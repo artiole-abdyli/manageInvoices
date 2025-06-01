@@ -1,6 +1,17 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Layout, Card, Table, Button, Row, Col, Typography } from "antd";
+import {
+  Layout,
+  Card,
+  Table,
+  Button,
+  Row,
+  Col,
+  Typography,
+  Tabs,
+  List,
+  Tag,
+} from "antd";
 import {
   ShoppingOutlined,
   ScheduleOutlined,
@@ -15,6 +26,8 @@ export default function DressesDashboard() {
   const [numberOfProducts, setNumberOfProducts] = useState<any>();
   const [numberOfReservations, setNumberOfReservations] = useState<any>();
   const [numberOfContacts, setNumberOfContacts] = useState<any>();
+  const [numberOfTodayReservation, setNumberOfTodayReservation] =
+    useState<any>();
   const [products, setProducts] = useState([]);
   const fetchProducts = async () => {
     try {
@@ -36,6 +49,7 @@ export default function DressesDashboard() {
       console.error(error);
     }
   };
+
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -121,6 +135,8 @@ export default function DressesDashboard() {
 
       if (!response.ok) throw new Error("Failed to fetch contact");
       const rawData = await response.json();
+      console.log("RESERVATIONS RAW NUMBER", rawData);
+      setNumberOfTodayReservation(rawData?.reservationsTodayCount);
       setNumberOfReservations(rawData?.numberOfReservations);
     } catch (error) {
       console.error(error);
@@ -151,6 +167,67 @@ export default function DressesDashboard() {
   useEffect(() => {
     fetchContactsNumber();
   });
+  const tabItems = [
+    {
+      key: "reserved",
+      label: "Reserved",
+      // children: (
+      //   <List
+      //     itemLayout="horizontal"
+      //     dataSource={sampleReservations.filter((r) => r.status === "reserved")}
+      //     renderItem={(item) => (
+      //       <List.Item>
+      //         <List.Item.Meta
+      //           title={`${item.customer} - ${item.product}`}
+      //           description={`Pickup Date: ${item.date}`}
+      //         />
+      //         <Tag color={statusColor[item.status]}>{item.status}</Tag>
+      //       </List.Item>
+      //     )}
+      //   />
+      // ),
+    },
+    {
+      key: "picked_up",
+      label: "Picked Up",
+      children: (
+        <List
+          itemLayout="horizontal"
+          // dataSource={sampleReservations.filter(
+          //   (r) => r.status === "picked_up"
+          // )}
+          // renderItem={(item) => (
+          //   <List.Item>
+          //     <List.Item.Meta
+          //       title={`${item.customer} - ${item.product}`}
+          //       description={`Picked up on: ${item.date}`}
+          //     />
+          //     <Tag color={statusColor[item.status]}>{item.status}</Tag>
+          //   </List.Item>
+          // )}
+        />
+      ),
+    },
+    {
+      key: "returned",
+      label: "Returned",
+      // children: (
+      // <List
+      //   itemLayout="horizontal"
+      //   dataSource={sampleReservations.filter((r) => r.status === "returned")}
+      //   renderItem={(item) => (
+      //     <List.Item>
+      //       <List.Item.Meta
+      //         title={`${item.customer} - ${item.product}`}
+      //         description={`Returned on: ${item.date}`}
+      //       />
+      //       <Tag color={statusColor[item.status]}>{item.status}</Tag>
+      //     </List.Item>
+      //   )}
+      // />
+      // ),
+    },
+  ];
 
   const dressColumns = [
     {
@@ -268,7 +345,7 @@ export default function DressesDashboard() {
             </Col>
           </Row>
 
-          <Row gutter={24}>
+          {/* <Row gutter={24}>
             <Col span={16}>
               <Card title="Dresses Inventory">
                 <Table
@@ -279,7 +356,96 @@ export default function DressesDashboard() {
                 />
               </Card>
             </Col>
+          </Row> */}
+          <Title level={4}>Reservations Overview</Title>
+          <Row>
+            <Col span={6}>
+              <Card
+                style={{
+                  cursor: "pointer",
+                  marginRight: "10px",
+                  marginBottom: "20px",
+                }}
+              >
+                <ShoppingOutlined
+                  style={{
+                    fontSize: 28,
+                    color: "#1890ff",
+                    marginRight: "10px",
+                  }}
+                />
+                <Text
+                  style={{
+                    color: "#1677ff",
+                    fontWeight: "500",
+                    fontSize: "16px",
+                  }}
+                >
+                  Today's Reservations
+                </Text>
+                <Title level={3} style={{ marginLeft: "40px" }}>
+                  {numberOfTodayReservation}
+                </Title>
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card
+                style={{
+                  cursor: "pointer",
+                  marginRight: "10px",
+                  marginBottom: "10px",
+                }}
+              >
+                <ScheduleOutlined
+                  style={{
+                    fontSize: 28,
+                    color: "#1890ff",
+                    marginRight: "10px",
+                  }}
+                />
+
+                <Text
+                  style={{
+                    color: "#1677ff",
+                    fontWeight: "500",
+                    fontSize: "16px",
+                  }}
+                >
+                  Overdue Reservations{" "}
+                </Text>
+                <Title level={3} style={{ marginLeft: "40px" }}>
+                  {numberOfReservations}
+                </Title>
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card style={{ cursor: "pointer", marginBottom: "10px" }}>
+                <ContactsOutlined
+                  style={{
+                    fontSize: 28,
+                    color: "#1890ff",
+                    marginRight: "10px",
+                  }}
+                />
+
+                <Text
+                  style={{
+                    color: "#1677ff",
+                    fontWeight: "500",
+                    fontSize: "16px",
+                  }}
+                >
+                  Returned
+                </Text>
+                <Title level={3} style={{ marginLeft: "40px" }}>
+                  {numberOfContacts}
+                </Title>
+              </Card>
+            </Col>
           </Row>
+          <Card style={{ marginBottom: "20px" }}>
+            <Tabs defaultActiveKey="reserved" items={tabItems} />
+          </Card>
         </Content>
       </Layout>
     </Layout>

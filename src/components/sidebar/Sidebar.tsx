@@ -86,11 +86,6 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
                 icon: <CalendarOutlined />,
                 label: "Reservations",
               },
-              {
-                key: "invoices",
-                icon: <ReconciliationOutlined />,
-                label: "Invoices",
-              },
             ]}
             style={{ flex: 1 }}
           />
