@@ -28,6 +28,9 @@ export default function DressesDashboard() {
   const [numberOfContacts, setNumberOfContacts] = useState<any>();
   const [numberOfTodayReservation, setNumberOfTodayReservation] =
     useState<any>();
+  const [activeReservations, setActiveReservations] = useState<any>();
+  const [numberOfOverdueReservation, setNumberOfOverdueReservation] =
+    useState<any>();
   const [products, setProducts] = useState([]);
   const fetchProducts = async () => {
     try {
@@ -124,20 +127,18 @@ export default function DressesDashboard() {
       console.error(error);
     }
   };
-  const fetchReservationsNumber = async () => {
+  const fetchReservations = async () => {
     try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/reservations-number`,
-        {
-          headers: { Accept: "application/json" },
-        }
-      );
+      const response = await fetch(`http://127.0.0.1:8000/api/reservations`, {
+        headers: { Accept: "application/json" },
+      });
 
       if (!response.ok) throw new Error("Failed to fetch contact");
       const rawData = await response.json();
-      console.log("RESERVATIONS RAW NUMBER", rawData);
       setNumberOfTodayReservation(rawData?.reservationsTodayCount);
       setNumberOfReservations(rawData?.numberOfReservations);
+      setNumberOfOverdueReservation(rawData?.overdueReservations);
+      setActiveReservations(rawData?.activeReservations);
     } catch (error) {
       console.error(error);
     }
@@ -162,7 +163,7 @@ export default function DressesDashboard() {
     fetchProductsNumber();
   }, []);
   useEffect(() => {
-    fetchReservationsNumber();
+    fetchReservations();
   });
   useEffect(() => {
     fetchContactsNumber();
@@ -311,7 +312,7 @@ export default function DressesDashboard() {
                   Active Reservations
                 </Text>
                 <Title level={3} style={{ marginLeft: "40px" }}>
-                  {numberOfReservations}
+                  {activeReservations}
                 </Title>
               </Card>
             </Col>
@@ -414,31 +415,7 @@ export default function DressesDashboard() {
                   Overdue Reservations{" "}
                 </Text>
                 <Title level={3} style={{ marginLeft: "40px" }}>
-                  {numberOfReservations}
-                </Title>
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card style={{ cursor: "pointer", marginBottom: "10px" }}>
-                <ContactsOutlined
-                  style={{
-                    fontSize: 28,
-                    color: "#1890ff",
-                    marginRight: "10px",
-                  }}
-                />
-
-                <Text
-                  style={{
-                    color: "#1677ff",
-                    fontWeight: "500",
-                    fontSize: "16px",
-                  }}
-                >
-                  Returned
-                </Text>
-                <Title level={3} style={{ marginLeft: "40px" }}>
-                  {numberOfContacts}
+                  {numberOfOverdueReservation}
                 </Title>
               </Card>
             </Col>

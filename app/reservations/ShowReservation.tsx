@@ -199,7 +199,7 @@ export default function ShowReservation({ id }: Props) {
           </Form.Item>
           <Form.Item name="status" label="Status">
             <Select placeholder="Select status">
-              <Select.Option value="on time">On Time</Select.Option>
+              <Select.Option value="on_time">On Time</Select.Option>
               <Select.Option value="overdue">Overdue</Select.Option>
             </Select>
           </Form.Item>
