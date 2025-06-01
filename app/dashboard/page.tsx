@@ -1,40 +1,71 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { Layout, Card, Table, Button, Row, Col, Typography } from "antd";
 import {
-  Layout,
-  Menu,
-  Avatar,
-  Input,
-  Card,
-  Table,
-  Badge,
-  Button,
-  Calendar,
-  Row,
-  Col,
-  Space,
-  Typography,
-} from "antd";
-import {
-  DashboardOutlined,
   ShoppingOutlined,
-  CalendarOutlined,
-  BarChartOutlined,
-  SettingOutlined,
-  SearchOutlined,
-  UserOutlined,
   ScheduleOutlined,
   ContactsOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 
-const { Header, Sider, Content } = Layout;
+const { Content } = Layout;
 const { Title, Text } = Typography;
 
 export default function DressesDashboard() {
   const [numberOfProducts, setNumberOfProducts] = useState<any>();
   const [numberOfReservations, setNumberOfReservations] = useState<any>();
   const [numberOfContacts, setNumberOfContacts] = useState<any>();
+  const [products, setProducts] = useState([]);
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/products", {
+        headers: { Accept: "application/json" },
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch products");
+
+      const rawData = await response.json();
+      const productsArray = Array.isArray(rawData) ? rawData : rawData.data;
+
+      if (!Array.isArray(productsArray)) {
+        throw new Error("Products are not an array");
+      }
+
+      setProducts(productsArray as any);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const productColumns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+    },
+    {
+      title: "Action",
+      render: (record: any) => (
+        <Button
+          type="link"
+          onClick={() => router.push(`/products/${record.id}`)}
+        >
+          View
+        </Button>
+      ),
+    },
+  ];
+
   const dressData = [
     {
       key: "1",
@@ -151,7 +182,6 @@ export default function DressesDashboard() {
         <Content style={{ margin: "24px 16px" }}>
           <Title level={2}>Dresses Management Dashboard</Title>
 
-          {/* Stats Cards */}
           <Row gutter={16} style={{ marginBottom: 24 }}>
             <Col span={6}>
               <Card
@@ -166,7 +196,15 @@ export default function DressesDashboard() {
                     marginRight: "10px",
                   }}
                 />
-                <Text>Total Dresses</Text>
+                <Text
+                  style={{
+                    color: "#1677ff",
+                    fontWeight: "500",
+                    fontSize: "16px",
+                  }}
+                >
+                  Total Dresses
+                </Text>
                 <Title level={3} style={{ marginLeft: "40px" }}>
                   {numberOfProducts}
                 </Title>
@@ -186,7 +224,15 @@ export default function DressesDashboard() {
                   }}
                 />
 
-                <Text>Active Reservations</Text>
+                <Text
+                  style={{
+                    color: "#1677ff",
+                    fontWeight: "500",
+                    fontSize: "16px",
+                  }}
+                >
+                  Active Reservations
+                </Text>
                 <Title level={3} style={{ marginLeft: "40px" }}>
                   {numberOfReservations}
                 </Title>
@@ -206,27 +252,29 @@ export default function DressesDashboard() {
                   }}
                 />
 
-                <Text>Contacts</Text>
+                <Text
+                  style={{
+                    color: "#1677ff",
+                    fontWeight: "500",
+                    fontSize: "16px",
+                  }}
+                >
+                  Contacts
+                </Text>
                 <Title level={3} style={{ marginLeft: "40px" }}>
                   {numberOfContacts}
                 </Title>
               </Card>
             </Col>
-
-            {/* <Col span={6}>
-              <Card>
-                <Text>Contacts</Text>
-                <Title level={3}>1,540</Title>
-              </Card>
-            </Col> */}
           </Row>
 
           <Row gutter={24}>
             <Col span={16}>
               <Card title="Dresses Inventory">
                 <Table
-                  dataSource={dressData}
-                  columns={dressColumns}
+                  dataSource={products}
+                  columns={productColumns}
+                  rowKey="id"
                   pagination={false}
                 />
               </Card>
