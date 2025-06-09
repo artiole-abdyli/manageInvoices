@@ -18,6 +18,7 @@ import {
   ContactsOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
+import { Tab } from "@headlessui/react";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -25,6 +26,7 @@ const { Title, Text } = Typography;
 export default function DressesDashboard() {
   const [numberOfProducts, setNumberOfProducts] = useState<any>();
   const [numberOfReservations, setNumberOfReservations] = useState<any>();
+  const [todaysReservations,setTodaysReservations]=useState<any>();
   const [numberOfContacts, setNumberOfContacts] = useState<any>();
   const [numberOfTodayReservation, setNumberOfTodayReservation] =
     useState<any>();
@@ -159,101 +161,56 @@ export default function DressesDashboard() {
       console.error(error);
     }
   };
+  const fetchReservationsOfToday=async()=>{
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/reservations-of-today`,
+        {
+          headers: { Accept: "application/json" },
+        }
+      );
+      const rawData = await response.json();
+      setTodaysReservations(rawData?.data);
+      if (!response.ok) throw new Error("Failed to fetch reservations");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    fetchReservationsOfToday();
+  }, []);
   useEffect(() => {
     fetchProductsNumber();
   }, []);
   useEffect(() => {
     fetchReservations();
-  });
+  },[]);
   useEffect(() => {
     fetchContactsNumber();
-  });
-  const tabItems = [
+  },[]);
+  const todayCols = [
+    { title: "Date", dataIndex: "date", key: "date" },
+    { title: "Price",    dataIndex: "price",  key: "price"  },
+   
     {
-      key: "reserved",
-      label: "Reserved",
-      // children: (
-      //   <List
-      //     itemLayout="horizontal"
-      //     dataSource={sampleReservations.filter((r) => r.status === "reserved")}
-      //     renderItem={(item) => (
-      //       <List.Item>
-      //         <List.Item.Meta
-      //           title={`${item.customer} - ${item.product}`}
-      //           description={`Pickup Date: ${item.date}`}
-      //         />
-      //         <Tag color={statusColor[item.status]}>{item.status}</Tag>
-      //       </List.Item>
-      //     )}
-      //   />
-      // ),
+      title: "Deposit",
+      dataIndex: "deposit",
+      key: "deposit",
+     
     },
     {
-      key: "picked_up",
-      label: "Picked Up",
-      children: (
-        <List
-          itemLayout="horizontal"
-          // dataSource={sampleReservations.filter(
-          //   (r) => r.status === "picked_up"
-          // )}
-          // renderItem={(item) => (
-          //   <List.Item>
-          //     <List.Item.Meta
-          //       title={`${item.customer} - ${item.product}`}
-          //       description={`Picked up on: ${item.date}`}
-          //     />
-          //     <Tag color={statusColor[item.status]}>{item.status}</Tag>
-          //   </List.Item>
-          // )}
-        />
-      ),
+      title: "Remaining payment",
+      dataIndex: "remaining_payment",
+      key: "remaining_payment",
+     
     },
     {
-      key: "returned",
-      label: "Returned",
-      // children: (
-      // <List
-      //   itemLayout="horizontal"
-      //   dataSource={sampleReservations.filter((r) => r.status === "returned")}
-      //   renderItem={(item) => (
-      //     <List.Item>
-      //       <List.Item.Meta
-      //         title={`${item.customer} - ${item.product}`}
-      //         description={`Returned on: ${item.date}`}
-      //       />
-      //       <Tag color={statusColor[item.status]}>{item.status}</Tag>
-      //     </List.Item>
-      //   )}
-      // />
-      // ),
-    },
+      title:"Status",
+      dataIndex:"status",
+      key:"status"
+    }
   ];
-
-  const dressColumns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-    },
-    {
-      title: "Size",
-      dataIndex: "size",
-    },
-    // {
-    //   title: "Status",
-    //   dataIndex: "status",
-    //   render: (status: any) => {
-    //     let color = "green";
-    //     if (status === "Reserved") color = "orange";
-    //     else if (status === "Out for Cleaning") color = "red";
-    //     return <Badge color={color} text={status} />;
-    //   },
-    // },
-    {
-      title: "Action",
-      render: () => <Button type="link">Edit</Button>,
-    },
-  ];
+ 
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Layout>
@@ -420,9 +377,13 @@ export default function DressesDashboard() {
               </Card>
             </Col>
           </Row>
-          <Card style={{ marginBottom: "20px" }}>
+          {/* <Card style={{ marginBottom: "20px" }}>
             <Tabs defaultActiveKey="reserved" items={tabItems} />
-          </Card>
+          </Card> */}
+          <Typography style={{fontSize:"20px",paddingBottom:"10px",fontWeight:"600"}}>Today's reservations</Typography>
+          <Table dataSource={todaysReservations} columns={todayCols}>
+
+          </Table>
         </Content>
       </Layout>
     </Layout>
