@@ -135,32 +135,32 @@ export default function ShowReservation({ id }: Props) {
         style={{ marginTop: 24, width: "900px" }}
       >
         <Descriptions bordered column={1}>
-          <Descriptions.Item label="Status">
-            {reservation?.status}
+          <Descriptions.Item label="Status" labelStyle={{color:"#1677ff"}}>
+            {reservation?.status} 
           </Descriptions.Item>
-          <Descriptions.Item label="Start Date">
+          <Descriptions.Item label="Start Date" labelStyle={{color:"#1677ff"}} >
             {reservation?.date}
           </Descriptions.Item>
-          <Descriptions.Item label="Return Date">
+          <Descriptions.Item label="Return Date" labelStyle={{color:"#1677ff"}}>
             {reservation?.returning_date}
           </Descriptions.Item>
-          <Descriptions.Item label="Contact">
+          <Descriptions.Item label="Contact" labelStyle={{color:"#1677ff"}}>
             {reservation?.contact?.firstname} {reservation?.contact?.lastname}
           </Descriptions.Item>
-          <Descriptions.Item label="Product">
+          <Descriptions.Item label="Product" labelStyle={{color:"#1677ff"}}>
             {reservation?.product?.name}
           </Descriptions.Item>
-          <Descriptions.Item label="Price">
+          <Descriptions.Item label="Price" labelStyle={{color:"#1677ff"}}>
             €{reservation?.price}
           </Descriptions.Item>
-          <Descriptions.Item label="Deposit">
+          <Descriptions.Item label="Deposit" labelStyle={{color:"#1677ff"}}>
             €{reservation?.deposit}
           </Descriptions.Item>
-          <Descriptions.Item label="Remaining Payment">
+          <Descriptions.Item label="Remaining Payment" labelStyle={{color:"#1677ff"}}>
             €{reservation?.remaining_payment}
           </Descriptions.Item>
 
-          <Descriptions.Item label="Extra Requirement">
+          <Descriptions.Item label="Extra Requirement" labelStyle={{color:"#1677ff"}}>
             {reservation?.extra_requirement || "None"}
           </Descriptions.Item>
         </Descriptions>
