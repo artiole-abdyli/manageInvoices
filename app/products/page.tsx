@@ -245,14 +245,14 @@ const [maxPrice, setMaxPrice] = useState<number | undefined>();
     placeholder="Min Price"
     style={{ width: 150 }}
     value={minPrice}
-    onChange={(value) => setMinPrice(value as any)}
-  />
+    onChange={(value) => setMinPrice(value ?? undefined)}
+    />
   <InputNumber
     placeholder="Max Price"
     style={{ width: 150 }}
     value={maxPrice}
-    onChange={(value) => setMaxPrice(value as any)}
-  />
+    onChange={(value) => setMaxPrice(value ?? undefined)}
+    />
 </div>
       <Table
         columns={columns}

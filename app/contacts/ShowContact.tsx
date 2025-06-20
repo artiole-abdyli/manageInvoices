@@ -1,9 +1,20 @@
 "use client";
 
-import { Card, Descriptions, Typography, Space, Button, Modal } from "antd";
+import {
+  Card,
+  Descriptions,
+  Typography,
+  Space,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Row,
+  Col,
+  message,
+} from "antd";
+import { EditOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { Form, Input, message } from "antd";
 
 type Props = {
   id: string;
@@ -23,9 +34,6 @@ export default function ShowContact({ id }: Props) {
   const [openContactModal, setOpenContactModal] = useState(false);
   const [form] = Form.useForm();
 
-  const handleClose = () => {
-    setOpenContactModal(false);
-  };
   const fetchReservationDetails = async (id: string) => {
     try {
       const response = await fetch(`http://127.0.0.1:8000/api/contact/${id}`, {
@@ -34,8 +42,8 @@ export default function ShowContact({ id }: Props) {
 
       if (!response.ok) throw new Error("Failed to fetch contact");
       const rawData = await response.json();
-
       setContact(rawData.data);
+      form.setFieldsValue(rawData.data); // Ensure form gets updated when modal opens
     } catch (error) {
       console.error(error);
     }
@@ -44,6 +52,7 @@ export default function ShowContact({ id }: Props) {
   useEffect(() => {
     fetchReservationDetails(id);
   }, [id]);
+
   const handleEditContact = async (values: Contact) => {
     try {
       const response = await fetch(`http://127.0.0.1:8000/api/contacts/${id}`, {
@@ -59,7 +68,7 @@ export default function ShowContact({ id }: Props) {
 
       message.success("Contact updated successfully");
       setOpenContactModal(false);
-      fetchReservationDetails(id); // refresh data
+      fetchReservationDetails(id); // refresh
     } catch (error) {
       console.error(error);
       message.error("Failed to update contact");
@@ -67,90 +76,103 @@ export default function ShowContact({ id }: Props) {
   };
 
   return (
-    <div style={{ padding: "15px" }}>
+    <div style={{ padding: "24px", maxWidth: 1000, margin: "0 auto" }}>
       <Space
         direction="horizontal"
         align="center"
         style={{
           justifyContent: "space-between",
-          width: "900px",
-          marginTop: 16,
+          width: "100%",
+          marginBottom: 24,
         }}
       >
-        <Typography.Title level={2}>Contact #{id}</Typography.Title>
-
-        <Space>
-          <Button
-            type="primary"
-            icon={<EditOutlined />}
-            onClick={() => setOpenContactModal(true)}
-          >
-            Edit
-          </Button>
-        </Space>
+        <Typography.Title level={2} style={{ margin: 0 }}>
+          Contact #{id}
+        </Typography.Title>
+        <Button
+          type="primary"
+          icon={<EditOutlined />}
+          onClick={() => setOpenContactModal(true)}
+        >
+          Edit Contact
+        </Button>
       </Space>
 
-      <Card title="Contact Details" style={{ marginTop: 24, width: "900px" }}>
-        <Descriptions bordered column={1}>
-          <Descriptions.Item label="Firstname">
-            {contact?.firstname}
+      <Card title="Contact Details" bordered>
+        <Descriptions column={2} labelStyle={{ fontWeight: 500 }}>
+          <Descriptions.Item label="First Name">
+            {contact?.firstname || "-"}
           </Descriptions.Item>
-          <Descriptions.Item label="Lastname">
-            {contact?.lastname}
+          <Descriptions.Item label="Last Name">
+            {contact?.lastname || "-"}
           </Descriptions.Item>
-          <Descriptions.Item label="Phone number">
-            {contact?.phone_number}
+          <Descriptions.Item label="Phone Number">
+            {contact?.phone_number || "-"}
           </Descriptions.Item>
-          <Descriptions.Item label="City">{contact?.city}</Descriptions.Item>
+          <Descriptions.Item label="City">
+            {contact?.city || "-"}
+          </Descriptions.Item>
           <Descriptions.Item label="Country">
-            {contact?.country}
+            {contact?.country || "-"}
           </Descriptions.Item>
         </Descriptions>
       </Card>
+
       <Modal
         title="Edit Contact"
         open={openContactModal}
-        onCancel={handleClose}
+        onCancel={() => setOpenContactModal(false)}
         onOk={() => form.submit()}
-        okText="Save"
+        okText="Save Changes"
+        destroyOnClose
       >
         <Form
           form={form}
           layout="vertical"
-          initialValues={contact}
           onFinish={handleEditContact}
+          style={{ marginTop: 16 }}
         >
-          <Form.Item
-            name="firstname"
-            label="Firstname"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="lastname"
-            label="Lastname"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="firstname"
+                label="First Name"
+                rules={[{ required: true, message: "First name is required" }]}
+              >
+                <Input placeholder="Enter first name" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="lastname"
+                label="Last Name"
+                rules={[{ required: true, message: "Last name is required" }]}
+              >
+                <Input placeholder="Enter last name" />
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Form.Item
             name="phone_number"
             label="Phone Number"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "Phone number is required" }]}
           >
-            <Input />
+            <Input placeholder="Enter phone number" />
           </Form.Item>
 
-          <Form.Item name="city" label="City">
-            <Input />
-          </Form.Item>
-
-          <Form.Item name="country" label="Country">
-            <Input />
-          </Form.Item>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item name="city" label="City">
+                <Input placeholder="Enter city" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="country" label="Country">
+                <Input placeholder="Enter country" />
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
       </Modal>
     </div>

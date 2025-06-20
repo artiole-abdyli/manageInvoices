@@ -372,78 +372,97 @@ export default function ReservationsPage() {
         })}
       />
 
-      <Modal
-        open={isModalOpen}
-        onCancel={handleClose}
-        width={1000}
-        height={1000}
-        title="Create new reservation"
-        onOk={() => form.submit()}
-      >
-        <Form
-          onFinish={handleCreate}
-          form={form}
-          style={{ paddingTop: "30px", paddingBottom: "30px" }}
+<Modal
+  open={isModalOpen}
+  onCancel={handleClose}
+  width={1000}
+  title="Create New Reservation"
+  onOk={() => form.submit()}
+  okText="Create"
+>
+  <Form
+    form={form}
+    onFinish={handleCreate}
+    layout="vertical"
+    style={{ paddingTop: 20 }}
+  >
+    <Row gutter={16}>
+      <Col span={12}>
+        <Form.Item
+          name="date"
+          label="Reservation Date"
+          rules={[{ required: true, message: "Please select the reservation date" }]}
         >
-          <Form.Item name="date" label="Date of reservation">
-            <DatePicker />
-          </Form.Item>
-          <Form.Item name="returning_date" label="Returning date">
-            <DatePicker />
-          </Form.Item>
-          <Form.Item name="product_id" label="Product">
-            <Select
-              options={productsOptions}
-              placeholder="Select a product"
-              style={{ width: "100%" }}
-            />
-          </Form.Item>
-          <Form.Item name="contact_id" label="Client">
-            <Select
-              options={contactsOptions}
-              placeholder="Select a contact"
-              style={{ width: "100%" }}
-            />
-          </Form.Item>
+          <DatePicker style={{ width: "100%" }} />
+        </Form.Item>
+      </Col>
+      <Col span={12}>
+        <Form.Item
+          name="returning_date"
+          label="Returning Date"
+          rules={[{ required: true, message: "Please select the returning date" }]}
+        >
+          <DatePicker style={{ width: "100%" }} />
+        </Form.Item>
+      </Col>
+    </Row>
 
-          <Row gutter={16}>
-            <Col span={8}>
-              <Form.Item name="price" label="Total price">
-                <InputNumber
-                  name="price"
-                  style={{ width: "100%" }}
-                  placeholder="€"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item name="deposit" label="Deposit">
-                <InputNumber
-                  name="deposit"
-                  style={{ width: "100%" }}
-                  placeholder="€"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item name="remaining_payment" label="Remaining payment">
-                <InputNumber
-                  name="remaining_payment"
-                  style={{ width: "100%" }}
-                  placeholder="€"
-                />
-              </Form.Item>
-            </Col>
-          </Row>
+    <Row gutter={16}>
+      <Col span={12}>
+        <Form.Item
+          name="product_id"
+          label="Product"
+          rules={[{ required: true, message: "Please select a product" }]}
+        >
+          <Select
+            options={productsOptions}
+            placeholder="Select a product"
+            style={{ width: "100%" }}
+          />
+        </Form.Item>
+      </Col>
+      <Col span={12}>
+        <Form.Item
+          name="contact_id"
+          label="Client"
+          rules={[{ required: true, message: "Please select a client" }]}
+        >
+          <Select
+            options={contactsOptions}
+            placeholder="Select a contact"
+            style={{ width: "100%" }}
+          />
+        </Form.Item>
+      </Col>
+    </Row>
 
-          <Form.Item name="extra_requirement" label="Extra requirement">
-            <Input.TextArea
-              rows={4}
-              placeholder="Enter extra requirements here..."
-            />
-          </Form.Item>
-        </Form>
-      </Modal>
+    <Row gutter={16}>
+      <Col span={8}>
+        <Form.Item name="price" label="Total Price (€)">
+          <InputNumber style={{ width: "100%" }} placeholder="€" />
+        </Form.Item>
+      </Col>
+      <Col span={8}>
+        <Form.Item name="deposit" label="Deposit (€)">
+          <InputNumber style={{ width: "100%" }} placeholder="€" />
+        </Form.Item>
+      </Col>
+      <Col span={8}>
+        <Form.Item name="remaining_payment" label="Remaining Payment (€)">
+          <InputNumber style={{ width: "100%" }} placeholder="€" />
+        </Form.Item>
+      </Col>
+    </Row>
+
+    <Form.Item name="extra_requirement" label="Extra Requirement">
+      <Input.TextArea
+        rows={3}
+        placeholder="Enter extra requirements (optional)"
+      />
+    </Form.Item>
+  </Form>
+</Modal>
+
     </>
   );
 }
