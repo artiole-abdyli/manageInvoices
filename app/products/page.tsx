@@ -32,13 +32,23 @@ export default function ProductsPage() {
   const [newProductCreated, setNewProductCreated] = useState(false);
   const [productDeleted, setProductDeleted] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const filteredProducts = products?.filter((product) =>
+ 
+  const [minPrice, setMinPrice] = useState<number | undefined>();
+const [maxPrice, setMaxPrice] = useState<number | undefined>();
+  const router = useRouter();
+  const searchedFilters = products?.filter((product) =>
     `${product?.name} ${product?.price} ${product?.deposit} ${product?.description}`
       .toLowerCase()
-      .includes(searchTerm.toLocaleLowerCase())
+      .includes(searchTerm.toLowerCase())
   );
-  const router = useRouter();
-
+  
+  const filteredProducts = searchedFilters?.filter((product) => {
+    const matchesPriceRange =
+      (minPrice === undefined || product.price! >= minPrice) &&
+      (maxPrice === undefined || product.price! <= maxPrice);
+    return matchesPriceRange;
+  });
+  
   const fetchProducts = async () => {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/products", {
@@ -230,6 +240,20 @@ export default function ProductsPage() {
         onChange={(e) => setSearchTerm(e.target.value)}
         style={{ width: 300, marginBottom: 20 }}
       />
+      <div style={{ display: "flex", gap: "1rem", marginBottom: 20 }}>
+  <InputNumber
+    placeholder="Min Price"
+    style={{ width: 150 }}
+    value={minPrice}
+    onChange={(value) => setMinPrice(value as any)}
+  />
+  <InputNumber
+    placeholder="Max Price"
+    style={{ width: 150 }}
+    value={maxPrice}
+    onChange={(value) => setMaxPrice(value as any)}
+  />
+</div>
       <Table
         columns={columns}
         dataSource={filteredProducts}
