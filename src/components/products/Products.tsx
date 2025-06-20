@@ -16,13 +16,25 @@ type Props = {
   id?: any;
   name?: any;
 };
+import { useRouter } from "next/navigation";
 
+type Reservation = {
+  id: string;
+  date?: string;
+  returning_date?: string;
+  extra_requirement?: string;
+  price?: number;
+  deposit?: number;
+  remaining_payment?: number;
+  // Add other fields if needed
+};
 export default function ProductShowPage({ id }: Props) {
   const [product, setProduct] = useState<any>();
-  const [reservation, setReservation] = useState<any>();
+  const [reservation, setReservation] = useState<Reservation[]>([]);
   const [openProductEditModal, setOpenProductEditModal] =
     useState<boolean>(false);
   const [form] = Form.useForm();
+  const router = useRouter();
 
   const handleOpenProductEditModal = () => {
     setOpenProductEditModal(true);
@@ -239,36 +251,71 @@ export default function ProductShowPage({ id }: Props) {
         >
           Reservations for this product
         </Typography>
-        <Table dataSource={reservation} columns={columns}></Table>
-        <Modal
-          title="Edit product"
-          open={openProductEditModal}
-          onCancel={handleCloseProductEditModal}
-          onOk={() => form.submit()} // This triggers form submit
-          width={600}
-          bodyStyle={{ paddingTop: "30px", minHeight: "400px" }} // Set height here
-        >
-          <Form form={form} onFinish={handleUpdateProduct}>
-            <Form.Item
-              name="name"
-              label="Name"
-              rules={[{ required: true, message: "Please enter name" }]}
-            >
-              <Input required style={{ marginBottom: "20px" }} />
-            </Form.Item>
+        <Table
+  dataSource={reservation}
+  columns={columns}
+  rowKey="id"
+  onRow={(record) => ({
+    onClick: () => {
+      if (record.id) {
+        router.push(`/reservations/${record.id}`);
+      }
+    },
+    style: { cursor: "pointer" }, // Show hand cursor on hover
+  })}
+/>        <Modal
+  title="Edit Product"
+  open={openProductEditModal}
+  onCancel={handleCloseProductEditModal}
+  onOk={() => form.submit()}
+  width={600}
+  destroyOnClose
+  okText="Save Changes"
+>
+  <Form
+    form={form}
+    layout="vertical"
+    onFinish={handleUpdateProduct}
+    style={{ paddingTop: "10px" }}
+  >
+    <Form.Item
+      name="name"
+      label="Product Name"
+      rules={[{ required: true, message: "Please enter the product name" }]}
+    >
+      <Input placeholder="Enter product name" />
+    </Form.Item>
 
-            <Form.Item name="price" label="Price">
-              <InputNumber name="price" style={{ marginBottom: "20px" }} />
-            </Form.Item>
-            <Form.Item
-              name="description"
-              label="Short description"
-              style={{ marginBottom: "20px" }}
-            >
-              <TextArea name="description" />
-            </Form.Item>
-          </Form>
-        </Modal>
+    <Form.Item
+      name="price"
+      label="Price (€)"
+      rules={[{ required: true, message: "Please enter a valid price" }]}
+    >
+      <InputNumber
+        placeholder="Enter price"
+        style={{ width: "100%" }}
+        min={0}
+        step={0.01}
+      />
+    </Form.Item>
+
+    <Form.Item name="description" label="Description">
+      <TextArea
+        placeholder="Enter product description"
+        rows={4}
+        style={{ resize: "vertical" }}
+      />
+    </Form.Item>
+
+    {/* Optional: You can later add image upload if needed */}
+    {/* <Form.Item name="image" label="Product Image">
+      <Upload beforeUpload={() => false} listType="picture">
+        <Button icon={<UploadOutlined />}>Upload Image</Button>
+      </Upload>
+    </Form.Item> */}
+  </Form>
+</Modal>
+
       </div>
     </div>
   );
