@@ -67,25 +67,8 @@ export default function ContactsPage() {
     { name: "phone_number", dataIndex: "phone_number", title: "Phone number" },
     { name: "city", dataIndex: "city", title: "City" },
     { name: "country", dataIndex: "country", title: "Country" },
-    {
-      name: "action",
-      title: "Action",
-      render: (_: any, record: Contact) => (
-        <div style={{ display: "flex", gap: "10px" }}>
-          <Popconfirm
-            title="Are you sure to delete this contact?"
-            onConfirm={(e) => {
-              e?.stopPropagation();
-              handleDelete(record.id);
-            }}
-            okText="Yes"
-            cancelText="No"
-          >
-            <DeleteOutlined style={{ color: "red", cursor: "pointer" }} />
-          </Popconfirm>
-        </div>
-      ),
-    },
+    {name:"created_at",dataIndex:"created_at",title:"Created at"}
+   
   ];
 
   const showModal = () => setIsModalOpen(true);

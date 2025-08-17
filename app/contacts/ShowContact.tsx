@@ -13,7 +13,7 @@ import {
   Col,
   message,
 } from "antd";
-import { EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 
 type Props = {
@@ -27,12 +27,13 @@ type Contact = {
   phone_number: string;
   city?: string;
   country?: string;
+  created_at?: string;
 };
 
 export default function ShowContact({ id }: Props) {
   const [contact, setContact] = useState<Contact>();
   const [openContactModal, setOpenContactModal] = useState(false);
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<Contact>();
 
   const fetchReservationDetails = async (id: string) => {
     try {
@@ -42,8 +43,8 @@ export default function ShowContact({ id }: Props) {
 
       if (!response.ok) throw new Error("Failed to fetch contact");
       const rawData = await response.json();
-      setContact(rawData.data);
-      form.setFieldsValue(rawData.data); // Ensure form gets updated when modal opens
+      setContact(rawData.data as Contact);
+      form.setFieldsValue(rawData.data); // Ensure form gets updated
     } catch (error) {
       console.error(error);
     }
@@ -51,6 +52,7 @@ export default function ShowContact({ id }: Props) {
 
   useEffect(() => {
     fetchReservationDetails(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleEditContact = async (values: Contact) => {
@@ -75,31 +77,68 @@ export default function ShowContact({ id }: Props) {
     }
   };
 
+  const handleDelete = async (deleteId?: number) => {
+    if (!deleteId) return;
+
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/contacts/${deleteId}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) throw new Error("Failed to delete contact");
+
+      message.success("Contact deleted successfully!");
+      // TODO: navigate away (e.g., router.push("/contacts"))
+    } catch (error) {
+      console.error(error);
+      message.error("Failed to delete contact");
+    }
+  };
+
+  const confirmDelete = () => {
+    Modal.confirm({
+      title: "Delete this contact?",
+      content: "This action cannot be undone.",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: () => handleDelete(contact?.id),
+    });
+  };
+
   return (
     <div style={{ padding: "24px", maxWidth: 1000, margin: "0 auto" }}>
-      <Space
-        direction="horizontal"
-        align="center"
+      <div
         style={{
+          display: "flex",
+          alignItems: "center",
           justifyContent: "space-between",
           width: "100%",
           marginBottom: 24,
         }}
       >
-        <Typography.Title level={2} style={{ margin: 0 }}>
-          Contact #{id}
+        {/* Left side: Contact name */}
+        <Typography.Title level={1} style={{ margin: 0, fontSize: "20px" }}>
+          Contact: {contact?.firstname} {contact?.lastname}
         </Typography.Title>
-        <Button
-          type="primary"
-          icon={<EditOutlined />}
-          onClick={() => setOpenContactModal(true)}
-        >
-          Edit Contact
-        </Button>
-      </Space>
+
+        <Space>
+          <Button icon={<EditOutlined />} onClick={() => setOpenContactModal(true)}>
+            Edit
+          </Button>
+          <Button
+            icon={<DeleteOutlined />}
+            danger
+            onClick={confirmDelete}
+            aria-label="Delete contact"
+          />
+        </Space>
+      </div>
 
       <Card title="Contact Details" bordered>
-        <Descriptions column={2} labelStyle={{ fontWeight: 500 }}>
+        <Descriptions column={1} labelStyle={{ fontWeight: 500 }}>
           <Descriptions.Item label="First Name">
             {contact?.firstname || "-"}
           </Descriptions.Item>
@@ -115,6 +154,11 @@ export default function ShowContact({ id }: Props) {
           <Descriptions.Item label="Country">
             {contact?.country || "-"}
           </Descriptions.Item>
+          <Descriptions.Item label="Created At">
+            {contact?.created_at
+              ? new Date(contact.created_at).toLocaleDateString("en-GB") // DD/MM/YYYY
+              : "-"}
+          </Descriptions.Item>
         </Descriptions>
       </Card>
 
@@ -125,13 +169,9 @@ export default function ShowContact({ id }: Props) {
         onOk={() => form.submit()}
         okText="Save Changes"
         destroyOnClose
+        width="50%"
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleEditContact}
-          style={{ marginTop: 16 }}
-        >
+        <Form form={form} layout="vertical" onFinish={handleEditContact} style={{ marginTop: 16 }}>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
@@ -153,13 +193,17 @@ export default function ShowContact({ id }: Props) {
             </Col>
           </Row>
 
-          <Form.Item
-            name="phone_number"
-            label="Phone Number"
-            rules={[{ required: true, message: "Phone number is required" }]}
-          >
-            <Input placeholder="Enter phone number" />
-          </Form.Item>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="phone_number"
+                label="Phone Number"
+                rules={[{ required: true, message: "Phone number is required" }]}
+              >
+                <Input placeholder="Enter phone number" />
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Row gutter={16}>
             <Col span={12}>

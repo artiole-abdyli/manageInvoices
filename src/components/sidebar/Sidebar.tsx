@@ -49,7 +49,6 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
             style={{
               height: 56,
               marginTop: 16,
-              borderRadius: "10px",
               marginLeft: 60,
               overflow: "hidden",
               paddingTop:"20px",
