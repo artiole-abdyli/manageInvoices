@@ -15,7 +15,7 @@ import {
 } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-
+import {useRouter} from "next/navigation";
 type Props = {
   id: string;
 };
@@ -34,7 +34,7 @@ export default function ShowContact({ id }: Props) {
   const [contact, setContact] = useState<Contact>();
   const [openContactModal, setOpenContactModal] = useState(false);
   const [form] = Form.useForm<Contact>();
-
+const router=useRouter();
   const fetchReservationDetails = async (id: string) => {
     try {
       const response = await fetch(`http://127.0.0.1:8000/api/contact/${id}`, {
@@ -49,6 +49,7 @@ export default function ShowContact({ id }: Props) {
       console.error(error);
     }
   };
+
 
   useEffect(() => {
     fetchReservationDetails(id);
@@ -91,6 +92,7 @@ export default function ShowContact({ id }: Props) {
       if (!response.ok) throw new Error("Failed to delete contact");
 
       message.success("Contact deleted successfully!");
+router.push("/contacts");
       // TODO: navigate away (e.g., router.push("/contacts"))
     } catch (error) {
       console.error(error);
