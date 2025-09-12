@@ -22,9 +22,10 @@ import dayjs, { Dayjs } from "dayjs";
 
 type Note = {
   id?: number;
-  title: string;
-  content: string;
-  date: string; // ISO date (YYYY-MM-DD)
+  title?: string;
+  content?: string;
+  description?:string;
+  date?: string; // ISO date (YYYY-MM-DD)
   created_at?: string;
   updated_at?: string;
 };
@@ -48,9 +49,8 @@ export default function NotesPage() {
   const fetchNotes = async () => {
     setLoading(true);
     try {
-      const from = weekStart.format("YYYY-MM-DD");
-      const to = weekEnd.format("YYYY-MM-DD");
-      const res = await fetch(`http://127.0.0.1:8000/api/notes?from=${from}&to=${to}`, {
+    
+      const res = await fetch(`http://127.0.0.1:8000/api/notes`, {
         headers: { Accept: "application/json" },
       });
       const raw = await res.json().catch(() => []);
@@ -138,13 +138,16 @@ export default function NotesPage() {
 
   return (
     <>
-      
+                 <Button type="primary" icon={<PlusOutlined />} onClick={openCreate} style={{marginTop:"20px",backgroundColor:"#1677ff"}}>New Note</Button>
+
+
       {notes.length === 0 ? (
         <Empty description="No notes for this week" />
       ) : (
         <Row gutter={[16, 16]}>
           {notes.map((note) => (
-            <Col key={note.id ?? note.title + note.date} xs={24} sm={12} md={8} lg={6}>
+            <Col key={note.id } xs={24} sm={12} md={8} lg={6}
+            >
               <Card
                 title={
                   <Space size={8}>
@@ -158,13 +161,13 @@ export default function NotesPage() {
                   <EyeOutlined key="view" onClick={() => openView(note)} />,
                   <EditOutlined key="edit" onClick={() => openEdit(note)} />,
                   <Popconfirm key="del" title="Delete this note?" onConfirm={() => handleDelete(note)}>
-                    <DeleteOutlined />
+                    <DeleteOutlined style={{color:"red"}}/>
                   </Popconfirm>,
                 ]}
-                style={{ height: "100%" }}
+                style={{ height: "100%",marginTop:"20px" }}
               >
                 <Typography.Paragraph ellipsis={{ rows: 5, expandable: false }}>
-                  {note.content}
+                  {note?.description}
                 </Typography.Paragraph>
               </Card>
             </Col>
