@@ -135,32 +135,32 @@ export default function ShowReservation({ id }: Props) {
         style={{ marginTop: 24, width: "900px" }}
       >
         <Descriptions bordered column={1}>
-          <Descriptions.Item label="Status" labelStyle={{color:"#1677ff"}}>
+          <Descriptions.Item label="Status" labelStyle={{color:"black",fontWeight:"bold"}}>
             {reservation?.status} 
           </Descriptions.Item>
-          <Descriptions.Item label="Start Date" labelStyle={{color:"#1677ff"}} >
+          <Descriptions.Item label="Start Date" labelStyle={{color:"black",fontWeight:"bold"}} >
             {reservation?.date}
           </Descriptions.Item>
-          <Descriptions.Item label="Return Date" labelStyle={{color:"#1677ff"}}>
+          <Descriptions.Item label="Return Date" labelStyle={{color:"black",fontWeight:"bold"}}>
             {reservation?.returning_date}
           </Descriptions.Item>
-          <Descriptions.Item label="Contact" labelStyle={{color:"#1677ff"}}>
+          <Descriptions.Item label="Contact" labelStyle={{color:"black",fontWeight:"bold"}}>
             {reservation?.contact?.firstname} {reservation?.contact?.lastname}
           </Descriptions.Item>
-          <Descriptions.Item label="Product" labelStyle={{color:"#1677ff"}}>
+          <Descriptions.Item label="Product" labelStyle={{color:"black",fontWeight:"bold"}}>
             {reservation?.product?.name}
           </Descriptions.Item>
-          <Descriptions.Item label="Price" labelStyle={{color:"#1677ff"}}>
+          <Descriptions.Item label="Price" labelStyle={{color:"black",fontWeight:"bold"}}>
             €{reservation?.price}
           </Descriptions.Item>
-          <Descriptions.Item label="Deposit" labelStyle={{color:"#1677ff"}}>
+          <Descriptions.Item label="Deposit" labelStyle={{color:"black",fontWeight:"bold"}}>
             €{reservation?.deposit}
           </Descriptions.Item>
-          <Descriptions.Item label="Remaining Payment" labelStyle={{color:"#1677ff"}}>
+          <Descriptions.Item label="Remaining Payment" labelStyle={{color:"black",fontWeight:"bold"}}>
             €{reservation?.remaining_payment}
           </Descriptions.Item>
 
-          <Descriptions.Item label="Extra Requirement" labelStyle={{color:"#1677ff"}}>
+          <Descriptions.Item label="Extra Requirement" labelStyle={{color:"black",fontWeight:"bold"}}>
             {reservation?.extra_requirement || "None"}
           </Descriptions.Item>
         </Descriptions>

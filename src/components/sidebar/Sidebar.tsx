@@ -15,6 +15,7 @@ import {
   ReconciliationOutlined,
   LogoutOutlined,
   DashboardOutlined,
+  HighlightOutlined ,
 } from "@ant-design/icons";
 import { url } from "inspector";
 import { useRouter } from "next/navigation";
@@ -86,6 +87,11 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
                 icon: <CalendarOutlined />,
                 label: "Reservations",
               },
+              {
+                key:"notes",
+                label:"Notes",
+                icon:<HighlightOutlined/>
+              }
             ]}
             style={{ flex: 1 }}
           />
