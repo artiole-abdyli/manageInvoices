@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import TextArea from "antd/es/input/TextArea";
+import { useI18n } from "@/src/i18n/I18nProvider";
 type Product = {
   id?: number;
   name?: any;
@@ -26,6 +27,7 @@ type Product = {
 };
 
 export default function ProductsPage() {
+  const { t } = useI18n();
   const [form] = useForm();
   const [products, setProducts] = useState<Product[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -227,35 +229,41 @@ const [maxPrice, setMaxPrice] = useState<number | undefined>();
         }}
       >
         <h1 style={{ margin: 0, fontSize: "20px", fontWeight: "500" }}>
-          Products of Chique dolls
+          {t("products.title")}
         </h1>
 
-        <Button type="primary" onClick={handleOpenModal}>
-          Create +
-        </Button>
+        <Button type="primary" onClick={handleOpenModal}>{t("products.create")}</Button>
       </div>{" "}
       <Input.Search
-        placeholder="Search products"
+        placeholder={t("products.searchPlaceholder")}
         allowClear
         onChange={(e) => setSearchTerm(e.target.value)}
         style={{ width: 300, marginBottom: 20 }}
       />
       <div style={{ display: "flex", gap: "1rem", marginBottom: 20 }}>
   <InputNumber
-    placeholder="Min Price"
+    placeholder={t("common.price") + " (min)"}
     style={{ width: 150 }}
     value={minPrice}
     onChange={(value) => setMinPrice(value ?? undefined)}
     />
   <InputNumber
-    placeholder="Max Price"
+    placeholder={t("common.price") + " (max)"}
     style={{ width: 150 }}
     value={maxPrice}
     onChange={(value) => setMaxPrice(value ?? undefined)}
     />
 </div>
       <Table
-        columns={columns}
+        columns={columns.map((c) => {
+          if (c.title === "Image") c.title = t("products.table.image");
+          if (c.title === "Name") c.title = t("products.table.name");
+          if (c.title === "Price") c.title = t("products.table.price");
+          if (c.title === "Description") c.title = t("products.table.description");
+          if (c.title === "Status") c.title = t("products.table.status");
+          // keep Action as-is for now
+          return c;
+        })}
         dataSource={filteredProducts}
         onRow={(record) => {
           return {
@@ -269,7 +277,7 @@ const [maxPrice, setMaxPrice] = useState<number | undefined>();
       <Modal
         open={isModalOpen}
         onCancel={handleCloseModal}
-        title="Create product"
+        title={t("products.create")}
         onOk={() => form.submit()}
       >
         <Form
@@ -280,14 +288,14 @@ const [maxPrice, setMaxPrice] = useState<number | undefined>();
         >
           <Form.Item
             name="name"
-            label="Name"
+            label={t("products.table.name")}
             rules={[{ required: true, message: "Please enter name" }]}
           >
             <Input name="name" required />
           </Form.Item>
           <Form.Item
             name="image"
-            label="Product Image"
+            label={t("products.table.image")}
             valuePropName="file"
             getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
           >
@@ -300,10 +308,10 @@ const [maxPrice, setMaxPrice] = useState<number | undefined>();
               + Upload
             </Upload>
           </Form.Item>
-          <Form.Item name="price" label="Price">
+          <Form.Item name="price" label={t("products.table.price")}>
             <InputNumber name="price" />
           </Form.Item>
-          <Form.Item name="description" label="Short description">
+          <Form.Item name="description" label={t("products.table.description")}>
             <TextArea name="description" />
           </Form.Item>
         </Form>

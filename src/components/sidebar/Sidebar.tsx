@@ -1,6 +1,6 @@
 "use client";
 import { PropsWithChildren, useState } from "react";
-import { Layout, Menu, ConfigProvider, Popconfirm } from "antd";
+import { Layout, Menu, ConfigProvider, Popconfirm, Select } from "antd";
 import {
   HomeOutlined,
   MoneyCollectOutlined,
@@ -20,11 +20,13 @@ import {
 import { url } from "inspector";
 import { useRouter } from "next/navigation";
 import { ClockCircleOutlined } from "@ant-design/icons";
+import { useI18n } from "@/src/i18n/I18nProvider";
 
 const { Sider, Header, Content } = Layout;
 const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
+  const { t, locale, setLocale } = useI18n();
   const handleLogout = () => {
     localStorage.removeItem("token");
 
@@ -70,33 +72,46 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
               {
                 key: "dashboard",
                 icon: <DashboardOutlined />,
-                label: "Dashboard",
+                label: t("sidebar.dashboard", "Dashboard"),
               },
               {
                 key: "contacts",
                 icon: <UserOutlined />,
-                label: "Contacts",
+                label: t("sidebar.contacts", "Contacts"),
               },
               {
                 key: "products",
                 icon: <SkinOutlined />,
-                label: "Dresses",
+                label: t("sidebar.products", "Dresses"),
               },
               {
                 key: "reservations",
                 icon: <CalendarOutlined />,
-                label: "Reservations",
+                label: t("sidebar.reservations", "Reservations"),
               },
               {
                 key:"notes",
-                label:"Notes",
+                label: t("sidebar.notes", "Notes"),
                 icon:<HighlightOutlined/>
               }
             ]}
             style={{ flex: 1 }}
           />
+             <div >
+              <Select
+                size="small"
+                value={locale}
+                style={{ width: "30%" ,marginTop:"200px",marginLeft:"30px",color:"#1677ff",borderRadius:"20px"}}
+                onChange={(v) => setLocale(v as any)}
+                options={[
+                  { value: "en", label: "EN" },
+                  { value: "al", label: "SQ" },
+                ]}
+              />
+            </div>
 
           <div style={{ marginTop: "auto", padding: "16px" }}>
+           
             <Popconfirm
               title="Are you sure you want to logout?"
               onConfirm={handleLogout}
@@ -122,13 +137,12 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
                     "transparent";
                 }}
               >
-                <LogoutOutlined
-                  style={{ marginRight: "10px", fontSize: "16px" }}
-                />
-                <span style={{ fontSize: "14px" }}>Logout</span>
+             
               </div>
+             
             </Popconfirm>
           </div>
+         
         </Sider>
 
         <Layout style={{ padding: "0 20px" }}>

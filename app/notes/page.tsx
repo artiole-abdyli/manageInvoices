@@ -19,7 +19,7 @@ import {
 } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined, EyeOutlined, ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
-import { Description } from "@headlessui/react";
+import { useI18n } from "@/src/i18n/I18nProvider";
 
 type Note = {
   id?: number;
@@ -33,6 +33,7 @@ type Note = {
 const dateFmt = (d?: string) => (d ? dayjs(d).format("ddd, MMM D") : "");
 
 export default function NotesPage() {
+  const { t } = useI18n();
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(false);
   const [weekOffset, setWeekOffset] = useState(0); // 0 = current week, -1 = previous, +1 = next
@@ -136,11 +137,11 @@ export default function NotesPage() {
 
   return (
     <>
-                 <Button type="primary" icon={<PlusOutlined />} onClick={openCreate} style={{marginTop:"20px",backgroundColor:"#1677ff"}}>New Note</Button>
+                 <Button type="primary" icon={<PlusOutlined />} onClick={openCreate} style={{marginTop:"20px",backgroundColor:"#1677ff"}}>{t("notes.new")}</Button>
 
 
       {notes.length === 0 ? (
-        <Empty description="No notes for this week" />
+        <Empty description={t("notes.noNotesWeek")} />
       ) : (
         <Row gutter={[16, 16]}>
           {notes.map((note) => (
@@ -158,7 +159,7 @@ export default function NotesPage() {
                 actions={[
                   <EyeOutlined key="view" onClick={() => openView(note)} />,
                   <EditOutlined key="edit" onClick={() => openEdit(note)} />,
-                  <Popconfirm key="del" title="Delete this note?" onConfirm={() => handleDelete(note)}>
+                  <Popconfirm key="del" title={t("notes.deleteConfirm")} onConfirm={() => handleDelete(note)}>
                     <DeleteOutlined style={{color:"red"}}/>
                   </Popconfirm>,
                 ]}
@@ -175,24 +176,24 @@ export default function NotesPage() {
 
       <Modal
         open={isModalOpen}
-        title={editingNote ? "Edit Note" : "New Note"}
+        title={editingNote ? t("notes.editNote") : t("notes.newNote")}
         onCancel={() => {
           setIsModalOpen(false);
           setEditingNote(null);
         }}
         onOk={() => form.submit()}
-        okText={editingNote ? "Save" : "Create"}
+        okText={editingNote ? t("actions.save") : t("actions.create")}
         width={640}
      >
         <Form form={form} layout="vertical" onFinish={onSubmit}>
-          <Form.Item name="title" label="Title" rules={[{ required: true, message: "Please enter a title" }]}>
-            <Input placeholder="Note title" maxLength={120} showCount />
+          <Form.Item name="title" label={t("notes.fields.title")} rules={[{ required: true }] }>
+            <Input placeholder={t("notes.fields.title")} maxLength={120} showCount />
           </Form.Item>
-          <Form.Item name="date" label="Date" rules={[{ required: true, message: "Pick a date" }]}>
+          <Form.Item name="date" label={t("notes.fields.date")} rules={[{ required: true }] }>
             <DatePicker style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="description" label="Description" rules={[{ required: true, message: "Please add description" }]}>
-            <Input.TextArea rows={6} placeholder="Write your note" />
+          <Form.Item name="description" label={t("notes.fields.content")} rules={[{ required: true }] }>
+            <Input.TextArea rows={6} placeholder={t("notes.fields.content")} />
           </Form.Item>
         </Form>
       </Modal>

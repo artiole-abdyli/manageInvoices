@@ -18,6 +18,7 @@ import {
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { DownloadOutlined } from "@ant-design/icons";
+import { useI18n } from "@/src/i18n/I18nProvider";
 
 type Contact = {
   id?: number;
@@ -29,6 +30,7 @@ type Contact = {
 };
 
 export default function ContactsPage() {
+  const { t } = useI18n();
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [newContactCreated, setNewContactCreated] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,13 +64,12 @@ export default function ContactsPage() {
   };
 
   const columns = [
-    { name: "firstname", dataIndex: "firstname", title: "First name" },
-    { name: "lastname", dataIndex: "lastname", title: "Last name" },
-    { name: "phone_number", dataIndex: "phone_number", title: "Phone number" },
-    { name: "city", dataIndex: "city", title: "City" },
-    { name: "country", dataIndex: "country", title: "Country" },
-    {name:"created_at",dataIndex:"created_at",title:"Created at"}
-   
+    { name: "firstname", dataIndex: "firstname", title: t("contacts.table.firstName") },
+    { name: "lastname", dataIndex: "lastname", title: t("contacts.table.lastName") },
+    { name: "phone_number", dataIndex: "phone_number", title: t("contacts.table.phoneNumber") },
+    { name: "city", dataIndex: "city", title: t("contacts.table.city") },
+    { name: "country", dataIndex: "country", title: t("contacts.table.country") },
+    { name: "created_at", dataIndex: "created_at", title: t("contacts.table.createdAt") }
   ];
 
   const showModal = () => setIsModalOpen(true);
@@ -169,15 +170,13 @@ export default function ContactsPage() {
         }}
       >
         <h1 style={{ margin: 0, fontSize: "20px", fontWeight: "500" }}>
-          Contacts of Chique dolls
+          {t("contacts.title")}
         </h1>
 
-        <Button type="primary" onClick={showModal}>
-          Create +
-        </Button>
+        <Button type="primary" onClick={showModal}>{t("contacts.create")}</Button>
       </div>
       <Input.Search
-        placeholder="Search contacts"
+        placeholder={t("contacts.searchPlaceholder")}
         allowClear
         onChange={(e) => setSearchTerm(e.target.value)}
         style={{ width: 300, marginBottom: 20 }}
@@ -191,7 +190,7 @@ export default function ContactsPage() {
           color: "white",
         }}
       >
-        Export PDF
+        {t("contacts.export")}
       </Button>
       <Upload
         name="file"
@@ -221,12 +220,7 @@ export default function ContactsPage() {
           }
         }}
       >
-        <Button
-          icon={<ImportOutlined />}
-          style={{ marginLeft: 10, backgroundColor: "#001529", color: "white" }}
-        >
-          Import PDF / Excel
-        </Button>
+        <Button icon={<ImportOutlined />}>{t("contacts.import")}</Button>
       </Upload>
 
       <Table
@@ -244,7 +238,7 @@ export default function ContactsPage() {
       />
 
       <Modal
-        title="Create Contact"
+        title={t("contacts.create")}
         open={isModalOpen}
         onCancel={closeModal}
         onOk={() => form.submit()}
@@ -257,31 +251,19 @@ export default function ContactsPage() {
           onFinish={handleCreate}
           style={{ marginTop: "40px", marginBottom: "60px" }}
         >
-          <Form.Item
-            name="firstname"
-            label="First name"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="firstname" label={t("contacts.table.firstName")} rules={[{ required: true }]}> 
             <Input />
           </Form.Item>
-          <Form.Item
-            name="lastname"
-            label="Last name"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="lastname" label={t("contacts.table.lastName")} rules={[{ required: true }]}> 
             <Input />
           </Form.Item>
-          <Form.Item
-            name="phone_number"
-            label="Phone number"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="phone_number" label={t("contacts.table.phoneNumber")} rules={[{ required: true }]}> 
             <Input />
           </Form.Item>
-          <Form.Item name="city" label="City">
+          <Form.Item name="city" label={t("contacts.table.city")}> 
             <Input />
           </Form.Item>
-          <Form.Item name="country" label="Country">
+          <Form.Item name="country" label={t("contacts.table.country")}> 
             <Input />
           </Form.Item>
         </Form>

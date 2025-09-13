@@ -20,6 +20,7 @@ import { DeleteOutlined, DownloadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useForm } from "antd/es/form/Form";
 import { useRouter } from "next/navigation";
+import { useI18n } from "@/src/i18n/I18nProvider";
 type Reservation = {
   contact: any;
   id?: number | undefined;
@@ -48,6 +49,7 @@ type Contact = {
   country?: string;
 };
 export default function ReservationsPage() {
+  const { t } = useI18n();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [newReservationCreated, setNewReservationCreated] = useState(false);
@@ -154,15 +156,15 @@ export default function ReservationsPage() {
     {
       name: "date",
       dataIndex: "date",
-      title: "Date",
+      title: t("reservations.date"),
     },
     {
       name: "date of returning",
       dataIndex: "returning_date",
-      title: "Date of returning",
+      title: t("reservations.returningDate"),
     },
     {
-      title: "Contact",
+      title: t("reservations.contact"),
       key: "contact",
       render: (_: any, record: Reservation) => {
         const contact = record?.contact;
@@ -173,20 +175,20 @@ export default function ReservationsPage() {
     {
       name: "price",
       dataIndex: "price",
-      title: "Price",
+      title: t("reservations.price"),
     },
     {
       name: "deposit",
       dataIndex: "deposit",
-      title: "Deposit",
+      title: t("reservations.deposit"),
     },
     {
       name: "Remaining payment",
       dataIndex: "remaining_payment",
-      title: "Remaining payment",
+      title: t("reservations.remainingPayment"),
     },
     {
-      title: "Status",
+      title: t("common.status"),
       key: "status",
       render: (_: any, record: Reservation) => {
         if (
@@ -200,22 +202,22 @@ export default function ReservationsPage() {
     },
     {
       name: "extra_requirement",
-      title: "Extra requirement",
+      title: t("reservations.extraRequirement"),
       dataIndex: "extra_requirement",
     },
     {
       name: "action",
-      title: "Action",
+      title: t("reservations.action"),
       render: (_: any, record: Reservation) => (
         <div>
           <Popconfirm
-            title="Are you sure to delete this reservation?"
+            title={t("actions.delete")}
             onConfirm={(e) => {
               e?.stopPropagation();
               handleDelete(record.id);
             }}
-            okText="Yes"
-            cancelText="No"
+            okText={t("common.ok")}
+            cancelText={t("common.cancel")}
           >
             <DeleteOutlined
               onClick={(e) => e.stopPropagation()}
@@ -303,13 +305,9 @@ export default function ReservationsPage() {
           margin: "20px 0",
         }}
       >
-        <h1 style={{ margin: 0, fontSize: "20px", fontWeight: "500" }}>
-          Reservations
-        </h1>
+        <h1 style={{ margin: 0, fontSize: "20px", fontWeight: "500" }}>{t("reservations.title")}</h1>
 
-        <Button type="primary" onClick={handleOpen}>
-          Create +
-        </Button>
+        <Button type="primary" onClick={handleOpen}>{t("reservations.create")}</Button>
       </div>
       <div style={{ marginBottom: 16 }}>
         <DatePicker.RangePicker
@@ -337,7 +335,7 @@ export default function ReservationsPage() {
           onClick={handleDownloadPdf}
           icon={<DownloadOutlined />}
         >
-          Export as pdf
+          {t("reservations.export")}
         </Button>
       </div>
 
@@ -376,9 +374,9 @@ export default function ReservationsPage() {
   open={isModalOpen}
   onCancel={handleClose}
   width={1000}
-  title="Create New Reservation"
+  title={t("reservations.create")}
   onOk={() => form.submit()}
-  okText="Create"
+  okText={t("actions.create")}
 >
   <Form
     form={form}
@@ -390,8 +388,8 @@ export default function ReservationsPage() {
       <Col span={12}>
         <Form.Item
           name="date"
-          label="Reservation Date"
-          rules={[{ required: true, message: "Please select the reservation date" }]}
+          label={t("reservations.form.reservationDate")}
+          rules={[{ required: true }]}
         >
           <DatePicker style={{ width: "100%" }} />
         </Form.Item>
@@ -399,8 +397,8 @@ export default function ReservationsPage() {
       <Col span={12}>
         <Form.Item
           name="returning_date"
-          label="Returning Date"
-          rules={[{ required: true, message: "Please select the returning date" }]}
+          label={t("reservations.form.returningDate")}
+          rules={[{ required: true }]}
         >
           <DatePicker style={{ width: "100%" }} />
         </Form.Item>
@@ -411,12 +409,12 @@ export default function ReservationsPage() {
       <Col span={12}>
         <Form.Item
           name="product_id"
-          label="Product"
-          rules={[{ required: true, message: "Please select a product" }]}
+          label={t("reservations.form.product")}
+          rules={[{ required: true }]}
         >
           <Select
             options={productsOptions}
-            placeholder="Select a product"
+            placeholder={t("reservations.form.product")}
             style={{ width: "100%" }}
           />
         </Form.Item>
@@ -424,12 +422,12 @@ export default function ReservationsPage() {
       <Col span={12}>
         <Form.Item
           name="contact_id"
-          label="Client"
-          rules={[{ required: true, message: "Please select a client" }]}
+          label={t("reservations.form.client")}
+          rules={[{ required: true }]}
         >
           <Select
             options={contactsOptions}
-            placeholder="Select a contact"
+            placeholder={t("reservations.form.client")}
             style={{ width: "100%" }}
           />
         </Form.Item>
@@ -438,26 +436,26 @@ export default function ReservationsPage() {
 
     <Row gutter={16}>
       <Col span={8}>
-        <Form.Item name="price" label="Total Price (€)">
+        <Form.Item name="price" label={t("reservations.form.totalPrice")}>
           <InputNumber style={{ width: "100%" }} placeholder="€" />
         </Form.Item>
       </Col>
       <Col span={8}>
-        <Form.Item name="deposit" label="Deposit (€)">
+        <Form.Item name="deposit" label={t("reservations.form.deposit")}>
           <InputNumber style={{ width: "100%" }} placeholder="€" />
         </Form.Item>
       </Col>
       <Col span={8}>
-        <Form.Item name="remaining_payment" label="Remaining Payment (€)">
+        <Form.Item name="remaining_payment" label={t("reservations.form.remainingPayment")}>
           <InputNumber style={{ width: "100%" }} placeholder="€" />
         </Form.Item>
       </Col>
     </Row>
 
-    <Form.Item name="extra_requirement" label="Extra Requirement">
+    <Form.Item name="extra_requirement" label={t("reservations.form.extraRequirement")}>
       <Input.TextArea
         rows={3}
-        placeholder="Enter extra requirements (optional)"
+        placeholder={t("reservations.form.extraRequirement")}
       />
     </Form.Item>
   </Form>

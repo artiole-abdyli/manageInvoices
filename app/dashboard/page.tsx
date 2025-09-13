@@ -19,11 +19,13 @@ import {
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { Tab } from "@headlessui/react";
+import { useI18n } from "@/src/i18n/I18nProvider";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
 export default function DressesDashboard() {
+  const { t } = useI18n();
   const [numberOfProducts, setNumberOfProducts] = useState<any>();
   const [numberOfReservations, setNumberOfReservations] = useState<any>();
   const [todaysReservations,setTodaysReservations]=useState<any>();
@@ -189,33 +191,18 @@ export default function DressesDashboard() {
     fetchContactsNumber();
   },[]);
   const todayCols = [
-    { title: "Date", dataIndex: "date", key: "date" },
-    { title: "Price",    dataIndex: "price",  key: "price"  },
-   
-    {
-      title: "Deposit",
-      dataIndex: "deposit",
-      key: "deposit",
-     
-    },
-    {
-      title: "Remaining payment",
-      dataIndex: "remaining_payment",
-      key: "remaining_payment",
-     
-    },
-    {
-      title:"Status",
-      dataIndex:"status",
-      key:"status"
-    }
+    { title: t("common.date"), dataIndex: "date", key: "date" },
+    { title: t("common.price"), dataIndex: "price", key: "price" },
+    { title: t("common.deposit"), dataIndex: "deposit", key: "deposit" },
+    { title: t("common.remainingPayment"), dataIndex: "remaining_payment", key: "remaining_payment" },
+    { title: t("common.status"), dataIndex: "status", key: "status" },
   ];
  
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Layout>
         <Content style={{ margin: "24px 16px" }}>
-          <Title level={2}>Dresses Management Dashboard</Title>
+          <Title level={2}>{t("dashboard.title")}</Title>
 
           <Row gutter={16} style={{ marginBottom: 24 }}>
             <Col span={6}>
@@ -238,7 +225,7 @@ export default function DressesDashboard() {
                     fontSize: "16px",
                   }}
                 >
-                  Total Dresses
+                  {t("dashboard.totalDresses")}
                 </Text>
                 <Title level={3} style={{ marginLeft: "40px" }}>
                   {numberOfProducts}
@@ -266,7 +253,7 @@ export default function DressesDashboard() {
                     fontSize: "16px",
                   }}
                 >
-                  Active Reservations
+                  {t("dashboard.activeReservations")}
                 </Text>
                 <Title level={3} style={{ marginLeft: "40px" }}>
                   {activeReservations}
@@ -294,7 +281,7 @@ export default function DressesDashboard() {
                     fontSize: "16px",
                   }}
                 >
-                  Contacts
+                  {t("dashboard.contacts")}
                 </Text>
                 <Title level={3} style={{ marginLeft: "40px" }}>
                   {numberOfContacts}
@@ -315,7 +302,7 @@ export default function DressesDashboard() {
               </Card>
             </Col>
           </Row> */}
-          <Title level={4}>Reservations Overview</Title>
+          <Title level={4}>{t("reservations.title")}</Title>
           <Row>
             <Col span={6}>
               <Card
@@ -339,7 +326,7 @@ export default function DressesDashboard() {
                     fontSize: "16px",
                   }}
                 >
-                  Today's Reservations
+                  {t("dashboard.todaysReservations")}
                 </Text>
                 <Title level={3} style={{ marginLeft: "40px" }}>
                   {numberOfTodayReservation}
@@ -369,7 +356,7 @@ export default function DressesDashboard() {
                     fontSize: "16px",
                   }}
                 >
-                  Overdue Reservations{" "}
+                  {t("dashboard.overdueReservations")} {" "}
                 </Text>
                 <Title level={3} style={{ marginLeft: "40px" }}>
                   {numberOfOverdueReservation}
@@ -380,7 +367,7 @@ export default function DressesDashboard() {
           {/* <Card style={{ marginBottom: "20px" }}>
             <Tabs defaultActiveKey="reserved" items={tabItems} />
           </Card> */}
-          <Typography style={{fontSize:"20px",paddingBottom:"10px",fontWeight:"600"}}>Today's reservations</Typography>
+          <Typography style={{fontSize:"20px",paddingBottom:"10px",fontWeight:"600"}}>{t("dashboard.todaysReservations")}</Typography>
           <Table dataSource={todaysReservations} columns={todayCols}>
 
           </Table>
