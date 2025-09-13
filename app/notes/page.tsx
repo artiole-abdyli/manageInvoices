@@ -19,11 +19,11 @@ import {
 } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined, EyeOutlined, ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
+import { Description } from "@headlessui/react";
 
 type Note = {
   id?: number;
   title?: string;
-  content?: string;
   description?:string;
   date?: string; // ISO date (YYYY-MM-DD)
   created_at?: string;
@@ -80,7 +80,7 @@ export default function NotesPage() {
     setEditingNote(note);
     form.setFieldsValue({
       title: note.title,
-      content: note.content,
+      description: note.description,
       date: dayjs(note.date),
     } as any);
     setIsModalOpen(true);
@@ -105,10 +105,9 @@ export default function NotesPage() {
   };
 
   const onSubmit = async (values: any) => {
-    // normalize date
     const payload: Note = {
       title: values.title,
-      content: values.content,
+      description: values.description,
       date: (values.date as Dayjs)?.format("YYYY-MM-DD") || dayjs().format("YYYY-MM-DD"),
     };
     try {
@@ -134,7 +133,6 @@ export default function NotesPage() {
     }
   };
 
-  const weekLabel = `${weekStart.format("MMM D")} — ${weekEnd.format("MMM D")}`;
 
   return (
     <>
@@ -193,7 +191,7 @@ export default function NotesPage() {
           <Form.Item name="date" label="Date" rules={[{ required: true, message: "Pick a date" }]}>
             <DatePicker style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="content" label="Content" rules={[{ required: true, message: "Please add content" }]}>
+          <Form.Item name="description" label="Description" rules={[{ required: true, message: "Please add description" }]}>
             <Input.TextArea rows={6} placeholder="Write your note" />
           </Form.Item>
         </Form>
@@ -208,7 +206,7 @@ export default function NotesPage() {
         <Space direction="vertical" size={8} style={{ width: "100%" }}>
           <Tag color="purple">{viewNote ? dateFmt(viewNote.date) : null}</Tag>
           <Typography.Paragraph style={{ whiteSpace: "pre-wrap" }}>
-            {viewNote?.content}
+            {viewNote?.description}
           </Typography.Paragraph>
         </Space>
       </Drawer>
