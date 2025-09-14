@@ -93,6 +93,11 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
                 key:"notes",
                 label: t("sidebar.notes", "Notes"),
                 icon:<HighlightOutlined/>
+              },
+              {
+                key:"mailings",
+                label:t("mailings","Mailings"),
+                icon:<MailOutlined/>
               }
             ]}
             style={{ flex: 1 }}
