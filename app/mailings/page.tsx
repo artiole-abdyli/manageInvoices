@@ -4,6 +4,7 @@ import { Button, DatePicker, Form, Input, Modal, Popconfirm, Table, message } fr
 import { EditOutlined, DeleteOutlined, PlusOutlined, MailOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 import { useI18n } from "@/src/i18n/I18nProvider";
+import RichEditor from "@/src/components/ui/RichEditor";
 
 type Mailing = {
   id?: number;
@@ -12,6 +13,7 @@ type Mailing = {
   title: string;
   subject: string;
   date: string; // ISO string (YYYY-MM-DD or datetime)
+  content?: string;
 };
 
 export default function MailingsPage() {
@@ -73,6 +75,7 @@ console.log("DATA:",data);
       title: values.title,
       subject: values.subject,
       date: (values.date as Dayjs)?.format("YYYY-MM-DD") || dayjs().format("YYYY-MM-DD"),
+      content: values.content || "",
     };
     const isEdit = Boolean(editing?.id);
     const url = isEdit ? `http://127.0.0.1:8000/api/mailings/${editing!.id}` : `http://127.0.0.1:8000/api/mailings`;
@@ -125,6 +128,7 @@ console.log("DATA:",data);
             marginBottom:"20px"
           }}
           icon={<MailOutlined />}
+          onClick={openCreate}
         >
           {t("mailings.create")} +
         </Button>
@@ -157,6 +161,9 @@ console.log("DATA:",data);
           <Form.Item name="subject" label={t("mailings.subject", "Subject")} rules={[{ required: true }]}>
             <Input placeholder={t("mailings.subject", "Subject")} />
           </Form.Item>
+          <Form.Item name="content" label={t("mailings.content", "Content")} rules={[{ required: true }]}>
+            <RichEditor placeholder={t("mailings.content", "Content")} />
+          </Form.Item>
           <Form.Item name="date" label={t("mailings.date", "Date")} rules={[{ required: true }]}>
             <DatePicker style={{ width: "100%" }} />
           </Form.Item>
@@ -165,4 +172,3 @@ console.log("DATA:",data);
     </>
   );
 }
-

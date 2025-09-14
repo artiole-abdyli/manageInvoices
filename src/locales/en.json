@@ -94,6 +94,7 @@
   "mailings.to": "To",
   "mailings.title": "Title",
   "mailings.subject": "Subject",
+  "mailings.content": "Content",
   "mailings.date": "Date",
   "mailings.action": "Action",
   "mailings.confirmDelete": "Delete this mailing?",
