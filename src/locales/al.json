@@ -4,7 +4,6 @@
   "sidebar.products": "Fustanet",
   "sidebar.reservations": "Rezervimet",
   "sidebar.notes": "Shënime",
-
   "common.ok": "OK",
   "common.cancel": "Anulo",
   "common.search": "Kërko",
@@ -13,7 +12,6 @@
   "common.price": "Çmimi",
   "common.deposit": "Paradhënia",
   "common.remainingPayment": "Pagesa e mbetur",
-
   "actions.new": "I ri",
   "actions.create": "Krijo",
   "actions.save": "Ruaj",
@@ -22,7 +20,6 @@
   "actions.view": "Shiko",
   "actions.exportPdf": "Eksporto PDF",
   "actions.import": "Importo",
-
   "dashboard.title": "Paneli i menaxhimit të fustaneve",
   "dashboard.subtitle": "Përmbledhje e ditës dhe operacioneve aktive",
   "dashboard.totalDresses": "Fustane gjithsej",
@@ -30,7 +27,6 @@
   "dashboard.contacts": "Kontaktet",
   "dashboard.todaysReservations": "Rezervimet e sotme",
   "dashboard.overdueReservations": "Rezervime të vonuara",
-
   "contacts.title": "Kontaktet",
   "contacts.subtitle": "Menaxho klientët dhe historikun",
   "contacts.searchPlaceholder": "Kërko kontaktet",
@@ -43,7 +39,6 @@
   "contacts.table.city": "Qyteti",
   "contacts.table.country": "Shteti",
   "contacts.table.createdAt": "Krijuar më",
-
   "products.title": "Produktet",
   "products.subtitle": "Katalogu i fustaneve dhe çmimet",
   "products.searchPlaceholder": "Kërko produktet",
@@ -53,7 +48,7 @@
   "products.table.price": "Çmimi",
   "products.table.description": "Përshkrimi",
   "products.table.status": "Statusi",
-
+  "reservations.filter_by_status": "Filtro në bazë të statusit",
   "reservations.title": "Rezervimet",
   "reservations.subtitle": "Rezervime, afate dhe bilance",
   "reservations.create": "Rezervim i ri",
@@ -75,7 +70,6 @@
   "reservations.form.deposit": "Paradhënia (€)",
   "reservations.form.remainingPayment": "Pagesa e mbetur (€)",
   "reservations.form.extraRequirement": "Kërkesë shtesë",
-
   "notes.title": "Shënime",
   "notes.subtitleWeek": "Java aktuale",
   "notes.previous": "Prapa",
@@ -87,5 +81,7 @@
   "notes.fields.title": "Titulli",
   "notes.fields.date": "Data",
   "notes.fields.content": "Përmbajtja",
-  "notes.deleteConfirm": "Ta fshij këtë shënim?"
+  "notes.deleteConfirm": "Ta fshij këtë shënim?",
+  "overdueStatus": "I vonuar",
+  "ontimeStatus": "Në kohë"
 }

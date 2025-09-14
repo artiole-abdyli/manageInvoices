@@ -195,9 +195,9 @@ export default function ReservationsPage() {
           record.returning_date &&
           dayjs(record.returning_date).isBefore(dayjs(), "day")
         ) {
-          return <Tag color="red">Overdue</Tag>;
+          return <Tag color="red">{t("overdueStatus")}</Tag>;
         }
-        return <Tag color="green">On Time</Tag>;
+        return <Tag color="green">{t("ontimeStatus")}</Tag>;
       },
     },
     {
@@ -318,12 +318,12 @@ export default function ReservationsPage() {
         />
         <Select
           style={{ width: 200, marginLeft: 16 }}
-          placeholder="Filter by Status"
+          placeholder={t("reservations.filter_by_status")}
           onChange={(value) => setStatusFilter(value)}
           allowClear
           options={[
-            { label: "Overdue", value: "overdue" },
-            { label: "On Time", value: "on_time" },
+            { label: t("overdueStatus"), value: "overdue" },
+            { label: t("ontimeStatus"), value: "on_time" },
           ]}
         />
         <Button

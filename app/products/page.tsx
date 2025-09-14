@@ -232,7 +232,7 @@ const [maxPrice, setMaxPrice] = useState<number | undefined>();
           {t("products.title")}
         </h1>
 
-        <Button type="primary" onClick={handleOpenModal}>{t("products.create")}</Button>
+        <Button type="primary" onClick={handleOpenModal}>{t("products.create")} +</Button>
       </div>{" "}
       <Input.Search
         placeholder={t("products.searchPlaceholder")}

@@ -52,6 +52,7 @@
   "reservations.subtitle": "Bookings, timelines and balances",
   "reservations.create": "New Reservation",
   "reservations.export": "Export PDF",
+  "reservations.filter_by_status": "Filter by status",
   "reservations.date": "Date",
   "reservations.returningDate": "Date of returning",
   "reservations.contact": "Contact",
@@ -80,5 +81,7 @@
   "notes.fields.title": "Title",
   "notes.fields.date": "Date",
   "notes.fields.content": "Content",
-  "notes.deleteConfirm": "Delete this note?"
+  "notes.deleteConfirm": "Delete this note?",
+  "overdueStatus": "Overdue",
+  "ontimeStatus": "On time"
 }

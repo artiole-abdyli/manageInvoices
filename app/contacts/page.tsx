@@ -185,7 +185,7 @@ export default function ContactsPage() {
         onClick={handleDownloadPdf}
         icon={<DownloadOutlined />}
         style={{
-          marginLeft: "10px",
+          marginLeft: "15px",
           backgroundColor: "#001529",
           color: "white",
         }}
@@ -219,8 +219,9 @@ export default function ContactsPage() {
             message.error("Failed to import contacts");
           }
         }}
+       
       >
-        <Button icon={<ImportOutlined />}>{t("contacts.import")}</Button>
+        <Button icon={<ImportOutlined />} style={{marginLeft:"10px"}}>{t("contacts.import")}</Button>
       </Upload>
 
       <Table
