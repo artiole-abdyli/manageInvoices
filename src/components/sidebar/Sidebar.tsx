@@ -40,7 +40,9 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
         components: { Layout: { headerBg: "#fff" } },
       }}
     >
+      
       <Layout style={{ minHeight: "100vh" }}>
+       
         <Sider
           collapsed={collapsed}
           onCollapse={setCollapsed}
@@ -48,6 +50,9 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
           breakpoint="lg"
           style={{ display: "flex", flexDirection: "column" }}
         >
+     
+             
+          
           <div
             style={{
               height: 56,
@@ -62,7 +67,16 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
               backgroundPosition: "left",
             }}
           ></div>
-
+ <Select
+                size="small"
+                value={locale}
+                style={{ width: "28%" ,marginLeft:"30px",color:"#1677ff",borderRadius:"50px",marginBottom:"20px"}}
+                onChange={(v) => setLocale(v as any)}
+                options={[
+                  { value: "en", label: "EN" },
+                  { value: "al", label: "SQ" },
+                ]}
+              />
           <Menu
             theme="dark"
             mode="inline"
@@ -102,18 +116,7 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
             ]}
             style={{ flex: 1 }}
           />
-             <div >
-              <Select
-                size="small"
-                value={locale}
-                style={{ width: "30%" ,marginTop:"200px",marginLeft:"30px",color:"#1677ff",borderRadius:"20px"}}
-                onChange={(v) => setLocale(v as any)}
-                options={[
-                  { value: "en", label: "EN" },
-                  { value: "al", label: "SQ" },
-                ]}
-              />
-            </div>
+            
 
           <div style={{ marginTop: "auto", padding: "16px" }}>
            
