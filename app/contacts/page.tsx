@@ -173,7 +173,12 @@ export default function ContactsPage() {
           {t("contacts.title")}
         </h1>
 
-        <Button type="primary" onClick={showModal}>{t("contacts.create")}</Button>
+        <Button type="primary" onClick={showModal}  style={{
+            marginTop: "20px",
+            backgroundColor: "#001529",
+            color: "white",
+            marginBottom:"20px"
+          }}>{t("contacts.create")} +</Button>
       </div>
       <Input.Search
         placeholder={t("contacts.searchPlaceholder")}

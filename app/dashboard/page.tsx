@@ -214,13 +214,13 @@ export default function DressesDashboard() {
                 <ShoppingOutlined
                   style={{
                     fontSize: 28,
-                    color: "#1890ff",
+                    color: "#001529",
                     marginRight: "10px",
                   }}
                 />
                 <Text
                   style={{
-                    color: "#1677ff",
+                    color: "#001529",
                     fontWeight: "500",
                     fontSize: "16px",
                   }}
@@ -241,14 +241,14 @@ export default function DressesDashboard() {
                 <ScheduleOutlined
                   style={{
                     fontSize: 28,
-                    color: "#1890ff",
+                    color: "#001529",
                     marginRight: "10px",
                   }}
                 />
 
                 <Text
                   style={{
-                    color: "#1677ff",
+                    color: "#001529",
                     fontWeight: "500",
                     fontSize: "16px",
                   }}
@@ -269,14 +269,14 @@ export default function DressesDashboard() {
                 <ContactsOutlined
                   style={{
                     fontSize: 28,
-                    color: "#1890ff",
+                    color: "#001529",
                     marginRight: "10px",
                   }}
                 />
 
                 <Text
                   style={{
-                    color: "#1677ff",
+                    color: "#001529",
                     fontWeight: "500",
                     fontSize: "16px",
                   }}
@@ -315,13 +315,13 @@ export default function DressesDashboard() {
                 <ShoppingOutlined
                   style={{
                     fontSize: 28,
-                    color: "#1890ff",
+                    color: "#001529",
                     marginRight: "10px",
                   }}
                 />
                 <Text
                   style={{
-                    color: "#1677ff",
+                    color: "#001529",
                     fontWeight: "500",
                     fontSize: "16px",
                   }}
@@ -344,14 +344,14 @@ export default function DressesDashboard() {
                 <ScheduleOutlined
                   style={{
                     fontSize: 28,
-                    color: "#1890ff",
+                    color: "#001529",
                     marginRight: "10px",
                   }}
                 />
 
                 <Text
                   style={{
-                    color: "#1677ff",
+                    color: "#001529",
                     fontWeight: "500",
                     fontSize: "16px",
                   }}

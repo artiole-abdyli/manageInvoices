@@ -137,7 +137,12 @@ export default function NotesPage() {
 
   return (
     <>
-                 <Button type="primary" icon={<PlusOutlined />} onClick={openCreate} style={{marginTop:"20px",backgroundColor:"#1677ff"}}>{t("notes.new")}</Button>
+                 <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}  style={{
+            marginTop: "20px",
+            backgroundColor: "#001529",
+            color: "white",
+            marginBottom:"20px"
+          }}>{t("notes.new")}</Button>
 
 
       {notes.length === 0 ? (

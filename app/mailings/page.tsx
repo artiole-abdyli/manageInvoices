@@ -13,7 +13,7 @@ type Mailing = {
   title: string;
   subject: string;
   date: string; // ISO string (YYYY-MM-DD or datetime)
-  content?: string;
+  message?: string;
 };
 
 export default function MailingsPage() {
@@ -75,7 +75,7 @@ console.log("DATA:",data);
       title: values.title,
       subject: values.subject,
       date: (values.date as Dayjs)?.format("YYYY-MM-DD") || dayjs().format("YYYY-MM-DD"),
-      content: values.content || "",
+      message: values.message || "",
     };
     const isEdit = Boolean(editing?.id);
     const url = isEdit ? `http://127.0.0.1:8000/api/mailings/${editing!.id}` : `http://127.0.0.1:8000/api/mailings`;
@@ -109,7 +109,7 @@ console.log("DATA:",data);
       key: "action",
       render: (_: any, record: Mailing) => (
         <>
-          <Button type="text" icon={<EditOutlined />} onClick={() => openEdit(record)} />
+          {/* <Button type="text" icon={<EditOutlined />} onClick={() => openEdit(record)} /> */}
           <Popconfirm title={t("mailings.confirmDelete", "Delete this mailing?")} onConfirm={() => handleDelete(record)}>
             <Button type="text" danger icon={<DeleteOutlined />} />
           </Popconfirm>
@@ -161,7 +161,7 @@ console.log("DATA:",data);
           <Form.Item name="subject" label={t("mailings.subject", "Subject")} rules={[{ required: true }]}>
             <Input placeholder={t("mailings.subject", "Subject")} />
           </Form.Item>
-          <Form.Item name="content" label={t("mailings.content", "Content")} rules={[{ required: true }]}>
+          <Form.Item name="message" label={t("mailings.content", "Content")} rules={[{ required: true }]}>
             <RichEditor placeholder={t("mailings.content", "Content")} />
           </Form.Item>
           <Form.Item name="date" label={t("mailings.date", "Date")} rules={[{ required: true }]}>

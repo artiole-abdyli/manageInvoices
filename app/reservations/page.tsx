@@ -307,7 +307,12 @@ export default function ReservationsPage() {
       >
         <h1 style={{ margin: 0, fontSize: "20px", fontWeight: "500" }}>{t("reservations.title")}</h1>
 
-        <Button type="primary" onClick={handleOpen}>{t("reservations.create")}</Button>
+        <Button type="primary" onClick={handleOpen}  style={{
+            marginTop: "20px",
+            backgroundColor: "#001529",
+            color: "white",
+            marginBottom:"20px"
+          }}>{t("reservations.create")} +</Button>
       </div>
       <div style={{ marginBottom: 16 }}>
         <DatePicker.RangePicker

@@ -20,7 +20,7 @@
   "actions.view": "View",
   "actions.exportPdf": "Export PDF",
   "actions.import": "Import",
-  "dashboard.title": "Dresses Management Dashboard",
+  "dashboard.title": "Dashboard",
   "dashboard.subtitle": "Overview of today and active operations",
   "dashboard.totalDresses": "Total Dresses",
   "dashboard.activeReservations": "Active Reservations",

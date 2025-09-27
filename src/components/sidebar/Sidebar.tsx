@@ -1,6 +1,7 @@
 "use client";
 import { PropsWithChildren, useState } from "react";
-import { Layout, Menu, ConfigProvider, Popconfirm, Select } from "antd";
+import type { MenuProps } from "antd";
+import { Layout, Menu, ConfigProvider, Popconfirm, Dropdown, Button } from "antd";
 import {
   HomeOutlined,
   MoneyCollectOutlined,
@@ -15,7 +16,9 @@ import {
   ReconciliationOutlined,
   LogoutOutlined,
   DashboardOutlined,
-  HighlightOutlined ,
+  HighlightOutlined,
+  GlobalOutlined,
+  DownOutlined,
 } from "@ant-design/icons";
 import { url } from "inspector";
 import { useRouter } from "next/navigation";
@@ -27,11 +30,37 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
   const { t, locale, setLocale } = useI18n();
+  const languageOptions = [
+    { key: "en", label: "English", shortLabel: "EN" },
+    { key: "al", label: "Shqip", shortLabel: "SQ" },
+  ];
   const handleLogout = () => {
     localStorage.removeItem("token");
 
     router.push("/login");
   };
+  const currentLanguage =
+    languageOptions.find((lang) => lang.key === locale) ?? languageOptions[0];
+
+  const languageMenu: MenuProps["items"] = languageOptions.map((lang) => ({
+    key: lang.key,
+    label: (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 5,
+        }}
+      >
+        <span>{lang.label}</span>
+        <span style={{ fontSize: 5, color: "rgba(0,0,0,0.45)" }}>
+          {lang.shortLabel}
+        </span>
+      </div>
+    ),
+  }));
+
   return (
     <ConfigProvider
       theme={{
@@ -67,16 +96,38 @@ const SiderLayout: React.FC<PropsWithChildren> = ({ children }) => {
               backgroundPosition: "left",
             }}
           ></div>
- <Select
+          <div style={{ padding: "0 24px", marginBottom: 24 }}>
+            <Dropdown
+              trigger={["click"]}
+              menu={{
+                items: languageMenu,
+                selectable: true,
+                selectedKeys: [String(locale)],
+                onClick: ({ key }) => setLocale(key as any),
+              }}
+            >
+              <Button
+                type="primary"
+                shape="round"
                 size="small"
-                value={locale}
-                style={{ width: "28%" ,marginLeft:"30px",color:"#1677ff",borderRadius:"50px",marginBottom:"20px"}}
-                onChange={(v) => setLocale(v as any)}
-                options={[
-                  { value: "en", label: "EN" },
-                  { value: "al", label: "SQ" },
-                ]}
-              />
+                icon={<GlobalOutlined />}
+                style={{
+                  width: "65%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 8,
+                  background: "rgba(255, 255, 255, 0.12)",
+                  borderColor: "rgba(255, 255, 255, 0.3)",
+                  color: "#fff",
+                  paddingInline: 10,
+                }}
+              >
+                <span style={{ fontWeight: 600 }}>{currentLanguage.label}</span>
+                <DownOutlined style={{ fontSize: 12 }} />
+              </Button>
+            </Dropdown>
+          </div>
           <Menu
             theme="dark"
             mode="inline"
