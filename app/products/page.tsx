@@ -12,7 +12,7 @@ import {
 } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useEffect, useState } from "react";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, DownloadOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import TextArea from "antd/es/input/TextArea";
 import { useI18n } from "@/src/i18n/I18nProvider";
@@ -94,6 +94,30 @@ const [maxPrice, setMaxPrice] = useState<number | undefined>();
       message.error("Failed to delete product");
     }
   };
+  const handleDownloadPdf = async () => {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/products/download/pdf",
+        {
+          method: "GET",
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to download PDF");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "products-list.pdf");
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+    } catch (error) {
+      console.error(error);
+      message.error("Failed to export PDF");
+    }
+  };
   const handleStatusToggle = async (product: Product) => {
     const newStatus =
       product?.status === "available" ? "out of stock" : "available";
@@ -124,7 +148,8 @@ const [maxPrice, setMaxPrice] = useState<number | undefined>();
     fetchProducts();
   }, [newProductCreated, productDeleted]);
   const columns = [
-    {
+    {title:"Id",dataIndex:"id",name:"Id"},
+        {
       title: "Image",
       dataIndex: "image_full_url", // updated field
       render: (url: string) =>
@@ -239,14 +264,17 @@ const [maxPrice, setMaxPrice] = useState<number | undefined>();
             marginBottom:"20px"
           }}>{t("products.create")} +</Button>
       </div>{" "}
-      <Input.Search
-        placeholder={t("products.searchPlaceholder")}
-        allowClear
-        onChange={(e) => setSearchTerm(e.target.value)}
-        style={{ width: 300, marginBottom: 20 }}
-      />
-      <div style={{ display: "flex", gap: "1rem", marginBottom: 20 }}>
-  <InputNumber
+      <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+        <Input.Search
+          placeholder={t("products.searchPlaceholder")}
+          allowClear
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ width: 300, marginBottom: 20 }}
+        />
+      
+              <div style={{ display: "flex", gap: "1rem", marginBottom: 20 }}>
+
+          <InputNumber
     placeholder={t("common.price") + " (min)"}
     style={{ width: 150 }}
     value={minPrice}
@@ -258,7 +286,22 @@ const [maxPrice, setMaxPrice] = useState<number | undefined>();
     value={maxPrice}
     onChange={(value) => setMaxPrice(value ?? undefined)}
     />
-</div>
+     
+    </div>
+     <Button
+          icon={<DownloadOutlined />}
+          onClick={handleDownloadPdf}
+          style={{
+            backgroundColor: "#001529",
+            color: "white",
+            marginBottom: 20,
+          }}
+        >
+          {t("actions.exportPdf")}
+        </Button>
+      </div>
+
+
       <Table
         columns={columns.map((c) => {
           if (c.title === "Image") c.title = t("products.table.image");

@@ -1,6 +1,7 @@
 "use client";
 import {
   Button,
+  DatePicker,
   Form,
   Input,
   Modal,
@@ -19,6 +20,7 @@ import {
 import { useRouter } from "next/navigation";
 import { DownloadOutlined } from "@ant-design/icons";
 import { useI18n } from "@/src/i18n/I18nProvider";
+import dayjs, { Dayjs } from "dayjs";
 
 type Contact = {
   id?: number;
@@ -27,6 +29,7 @@ type Contact = {
   phone_number: string;
   city?: string;
   country?: string;
+  created_at?: string;
 };
 
 export default function ContactsPage() {
@@ -37,39 +40,44 @@ export default function ContactsPage() {
   const [form] = useForm();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
-  const filteredContacts = contacts?.filter((contact) =>
-    `${contact?.firstname} ${contact?.lastname} ${contact?.phone_number}`
+  const [createdDateRange, setCreatedDateRange] = useState<[
+    Dayjs | null,
+    Dayjs | null
+  ]>([null, null]);
+
+  const filteredContacts = contacts?.filter((contact) => {
+    const matchesSearch = `${contact?.firstname} ${contact?.lastname} ${contact?.phone_number}`
       .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  );
-  const handleDelete = async (id?: number) => {
-    if (!id) return;
+      .includes(searchTerm.toLowerCase());
 
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/api/contacts/${id}`, {
-        method: "DELETE",
-        headers: {
-          Accept: "application/json",
-        },
-      });
+    if (!matchesSearch) return false;
 
-      if (!response.ok) throw new Error("Failed to delete contact");
+    const [startDate, endDate] = createdDateRange;
+    if (startDate || endDate) {
+      if (!contact?.created_at) return false;
+      const created = dayjs(contact.created_at);
+      if (!created.isValid()) return false;
 
-      setContacts((prev) => prev.filter((c) => c.id !== id));
-      message.success("Contact deleted successfully!");
-    } catch (error) {
-      console.error(error);
-      message.error("Failed to delete contact");
+      if (startDate && created.isBefore(startDate.startOf("day"))) return false;
+      if (endDate && created.isAfter(endDate.endOf("day"))) return false;
     }
-  };
 
+    return true;
+  });
+ 
   const columns = [
+    {name:"Id",dataIndex:"id",title:"id"},
     { name: "firstname", dataIndex: "firstname", title: t("contacts.table.firstName") },
     { name: "lastname", dataIndex: "lastname", title: t("contacts.table.lastName") },
     { name: "phone_number", dataIndex: "phone_number", title: t("contacts.table.phoneNumber") },
     { name: "city", dataIndex: "city", title: t("contacts.table.city") },
     { name: "country", dataIndex: "country", title: t("contacts.table.country") },
-    { name: "created_at", dataIndex: "created_at", title: t("contacts.table.createdAt") }
+    {
+      name: "created_at",
+      dataIndex: "created_at",
+      title: t("contacts.table.createdAt"),
+      render: (value: string) => (value ? dayjs(value).format("DD/MM/YY") : ""),
+    }
   ];
 
   const showModal = () => setIsModalOpen(true);
@@ -180,55 +188,34 @@ export default function ContactsPage() {
             marginBottom:"20px"
           }}>{t("contacts.create")} +</Button>
       </div>
-      <Input.Search
-        placeholder={t("contacts.searchPlaceholder")}
-        allowClear
-        onChange={(e) => setSearchTerm(e.target.value)}
-        style={{ width: 300, marginBottom: 20 }}
-      />
-      <Button
+      <div style={{ display: "flex", gap: "16px", flexWrap: "wrap"}}>
+        <Input.Search
+          placeholder={t("contacts.searchPlaceholder")}
+          allowClear
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ width: 300, marginBottom: 20 }}
+        />
+        <DatePicker.RangePicker
+          allowClear
+          onChange={(range) =>
+            setCreatedDateRange(range as [Dayjs | null, Dayjs | null])
+          }
+          style={{ minWidth: 270, marginBottom: 20 }}
+        />
+           <Button
         onClick={handleDownloadPdf}
         icon={<DownloadOutlined />}
         style={{
           marginLeft: "15px",
           backgroundColor: "#001529",
-          color: "white",
+          color: "white"
         }}
       >
         {t("contacts.export")}
       </Button>
-      <Upload
-        name="file"
-        accept=".pdf,.xlsx,.xls"
-        showUploadList={false}
-        customRequest={async ({ file, onSuccess, onError }) => {
-          const formData = new FormData();
-          formData.append("file", file);
-
-          try {
-            const response = await fetch(
-              "http://127.0.0.1:8000/api/contacts/import",
-              {
-                method: "POST",
-                body: formData,
-              }
-            );
-
-            if (!response.ok) throw new Error("Failed to import contacts");
-
-            message.success("Contacts imported successfully!");
-            fetchContacts();
-            onSuccess?.(response);
-          } catch (err) {
-            console.error(err);
-            message.error("Failed to import contacts");
-          }
-        }}
-       
-      >
-        <Button icon={<ImportOutlined />} style={{marginLeft:"10px"}}>{t("contacts.import")}</Button>
-      </Upload>
-
+      </div>
+   
+    
       <Table
         columns={columns}
         dataSource={filteredContacts}

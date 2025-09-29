@@ -32,6 +32,7 @@ type Reservation = {
   remaining_payment?: number;
   contact_id?: any; //qeto duhesh me ndryshu
   product_id?: any; //edhe qeto
+  product?: Product;
 };
 type Product = {
   id?: number;
@@ -57,6 +58,7 @@ export default function ReservationsPage() {
   const [form] = useForm();
   const router = useRouter();
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null]>([
     null,
@@ -154,14 +156,22 @@ export default function ReservationsPage() {
   };
   const columns = [
     {
+    
+      name:"id",
+      dataIndex:"id",
+      title:"Id",
+    },
+    {
       name: "date",
       dataIndex: "date",
       title: t("reservations.date"),
+      render: (value: string) => (value ? dayjs(value).format("DD/MM/YY") : ""),
     },
     {
       name: "date of returning",
       dataIndex: "returning_date",
       title: t("reservations.returningDate"),
+      render: (value: string) => (value ? dayjs(value).format("DD/MM/YY") : ""),
     },
     {
       title: t("reservations.contact"),
@@ -314,7 +324,21 @@ export default function ReservationsPage() {
             marginBottom:"20px"
           }}>{t("reservations.create")} +</Button>
       </div>
-      <div style={{ marginBottom: 16 }}>
+      <div
+        style={{
+          display: "flex",
+          gap: 16,
+          flexWrap: "wrap",
+          alignItems: "center",
+          marginBottom: 16,
+        }}
+      >
+        <Input.Search
+          placeholder={t("reservations.searchPlaceholder", "Search reservations")}
+          allowClear
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ width: 300 }}
+        />
         <DatePicker.RangePicker
           onChange={(dates) =>
             setDateRange(dates as [Dayjs | null, Dayjs | null])
@@ -322,7 +346,7 @@ export default function ReservationsPage() {
           allowClear
         />
         <Select
-          style={{ width: 200, marginLeft: 16 }}
+          style={{ width: 200 }}
           placeholder={t("reservations.filter_by_status")}
           onChange={(value) => setStatusFilter(value)}
           allowClear
@@ -333,7 +357,6 @@ export default function ReservationsPage() {
         />
         <Button
           style={{
-            marginLeft: "10px",
             backgroundColor: "#001529",
             color: "white",
           }}
@@ -347,6 +370,27 @@ export default function ReservationsPage() {
       <Table
         columns={columns}
         dataSource={reservations.filter((res) => {
+          const trimmedSearch = searchTerm.trim().toLowerCase();
+          if (trimmedSearch) {
+            const contactName = `${res.contact?.firstname ?? ""} ${res.contact?.lastname ?? ""}`.toLowerCase();
+            const productName = (res.product?.name ?? "").toLowerCase();
+            const extraRequirement = (res.extra_requirement ?? "").toLowerCase();
+            const price = res.price !== undefined ? String(res.price).toLowerCase() : "";
+            const reservationId = res.id !== undefined ? String(res.id).toLowerCase() : "";
+
+            const matchesSearch = [
+              contactName,
+              productName,
+              extraRequirement,
+              price,
+              reservationId,
+            ].some((value) => value.includes(trimmedSearch));
+
+            if (!matchesSearch) {
+              return false;
+            }
+          }
+
           if (dateRange?.[0] && dateRange?.[1]) {
             const reservationDate = dayjs(res.date);
             if (

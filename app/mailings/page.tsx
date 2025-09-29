@@ -23,6 +23,12 @@ export default function MailingsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editing, setEditing] = useState<Mailing | null>(null);
   const [form] = Form.useForm<Mailing & { date: Dayjs }>();
+    const [searchTerm, setSearchTerm] = useState("");
+ const searchedFilters = data?.filter((data) =>
+    `${data?.title} ${data?.subject} ${data?.message} ${data?.from} ${data?.to}`
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  );
 console.log("DATA:",data);
   const fetchMailings = async () => {
     setLoading(true);
@@ -99,6 +105,7 @@ console.log("DATA:",data);
   };
 
   const columns = [
+    {title:"Id",dataIndex:"id",key:"id"},
     { title: t("mailings.from", "From"), dataIndex: "from", key: "from" },
     { title: t("mailings.to", "To"), dataIndex: "to", key: "to" },
     { title: t("mailings.title", "Title"), dataIndex: "title", key: "title" },
@@ -120,22 +127,38 @@ console.log("DATA:",data);
 
   return (
     <>
-          <Button
-          style={{
-            marginTop: "20px",
-            backgroundColor: "#001529",
-            color: "white",
-            marginBottom:"20px"
-          }}
-          icon={<MailOutlined />}
-          onClick={openCreate}
-        >
-          {t("mailings.create")} +
-        </Button>
+    <div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "16px", // spacing between button and search
+    marginTop: "20px",
+    marginBottom: "20px",
+  }}
+>
+  <Button
+    style={{
+      backgroundColor: "#001529",
+      color: "white",
+    }}
+    icon={<MailOutlined />}
+    onClick={openCreate}
+  >
+    {t("mailings.create")} +
+  </Button>
 
+  <Input.Search
+    placeholder={t("products.searchPlaceholder")}
+    allowClear
+    onChange={(e) => setSearchTerm(e.target.value)}
+    style={{ width: 300 }}
+  />
+</div>
+
+         
       <Table
         columns={columns as any}
-        dataSource={data}
+        dataSource={searchedFilters}
         loading={loading}
         rowKey={(r) => String(r.id ?? `${r.from}-${r.to}-${r.date}`)}
       />
