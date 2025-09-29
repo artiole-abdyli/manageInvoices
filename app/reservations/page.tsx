@@ -426,6 +426,12 @@ export default function ReservationsPage() {
   title={t("reservations.create")}
   onOk={() => form.submit()}
   okText={t("actions.create")}
+  okButtonProps={{
+    style: {
+            backgroundColor: "#001529",
+      borderColor: "#001529",       // optional: keep border in sync
+    },
+  }}
 >
   <Form
     form={form}

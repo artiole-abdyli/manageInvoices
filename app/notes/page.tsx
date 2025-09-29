@@ -187,6 +187,12 @@ export default function NotesPage() {
           setEditingNote(null);
         }}
         onOk={() => form.submit()}
+          okButtonProps={{
+    style: {
+            backgroundColor: "#001529",
+      borderColor: "#001529",       // optional: keep border in sync
+    },
+  }}
         okText={editingNote ? t("actions.save") : t("actions.create")}
         width={640}
      >

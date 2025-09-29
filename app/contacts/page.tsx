@@ -186,6 +186,7 @@ export default function ContactsPage() {
             backgroundColor: "#001529",
             color: "white",
             marginBottom:"20px"
+            
           }}>{t("contacts.create")} +</Button>
       </div>
       <div style={{ display: "flex", gap: "16px", flexWrap: "wrap"}}>
@@ -235,6 +236,12 @@ export default function ContactsPage() {
         open={isModalOpen}
         onCancel={closeModal}
         onOk={() => form.submit()}
+          okButtonProps={{
+    style: {
+          backgroundColor: "#001529",
+      borderColor: "#001529",       // optional: keep border in sync
+    },
+  }}
         okText="Create"
         width={600}
       >

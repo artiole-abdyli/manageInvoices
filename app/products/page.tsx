@@ -327,6 +327,12 @@ const [maxPrice, setMaxPrice] = useState<number | undefined>();
         onCancel={handleCloseModal}
         title={t("products.create")}
         onOk={() => form.submit()}
+          okButtonProps={{
+    style: {
+            backgroundColor: "#001529",
+      borderColor: "#001529",       // optional: keep border in sync
+    },
+  }}
       >
         <Form
           layout="vertical"

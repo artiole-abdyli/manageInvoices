@@ -169,6 +169,12 @@ console.log("DATA:",data);
         onCancel={() => { setIsModalOpen(false); setEditing(null); }}
         onOk={() => form.submit()}
         okText={editing ? t("actions.save", "Save") : t("actions.create", "Create")}
+          okButtonProps={{
+    style: {
+      backgroundColor: "#001529",   // your new color
+      borderColor: "#001529",       // optional: keep border in sync
+    },
+  }}
         width={700}
       >
         <Form form={form} layout="vertical" onFinish={onSubmit}>
